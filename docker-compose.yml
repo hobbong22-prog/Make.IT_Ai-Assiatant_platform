@@ -1,0 +1,91 @@
+services:
+  # PostgreSQL 데이터베이스
+  database:
+    image: postgres:15-alpine
+    container_name: makit-db
+    environment:
+      POSTGRES_DB: makit
+      POSTGRES_USER: makit_user
+      POSTGRES_PASSWORD: makit_password
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+    networks:
+      - makit-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U makit_user -d makit"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Redis 캐시
+  redis:
+    image: redis:7-alpine
+    container_name: makit-redis
+    ports:
+      - "6379:6379"
+    networks:
+      - makit-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Spring Boot 백엔드
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    image: makit-backend:latest
+    container_name: makit-backend
+    environment:
+      SPRING_PROFILES_ACTIVE: docker
+      SPRING_DATASOURCE_URL: jdbc:postgresql://database:5432/makit
+      SPRING_DATASOURCE_USERNAME: makit_user
+      SPRING_DATASOURCE_PASSWORD: makit_password
+      AWS_REGION: ${AWS_REGION:-ap-northeast-2}
+      AWS_ACCESS_KEY_ID: ${AWS_ACCESS_KEY_ID:-}
+      AWS_SECRET_ACCESS_KEY: ${AWS_SECRET_ACCESS_KEY:-}
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - makit-network
+    volumes:
+      - app_logs:/app/logs
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080/actuator/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
+
+  # Nginx 프론트엔드
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: makit-frontend:latest
+    container_name: makit-frontend
+    ports:
+      - "80:80"
+    depends_on:
+      - backend
+    networks:
+      - makit-network
+
+volumes:
+  postgres_data:
+    driver: local
+  app_logs:
+    driver: local
+
+networks:
+  makit-network:
+    driver: bridge
