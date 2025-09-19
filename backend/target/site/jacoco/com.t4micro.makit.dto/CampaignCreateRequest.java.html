@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CampaignCreateRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.dto</a> &gt; <span class="el_source">CampaignCreateRequest.java</span></div><h1>CampaignCreateRequest.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.dto;
+
+import com.t4micro.makit.domain.Campaign;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+
+public class CampaignCreateRequest {
+    
+    @NotNull
+    private Long userId;
+    
+    @NotBlank
+    private String name;
+    
+    private String description;
+    
+    @NotNull
+    private Campaign.CampaignType type;
+    
+    private String targetAudience;
+    private Double budget;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    
+    // Constructors
+<span class="nc" id="L28">    public CampaignCreateRequest() {}</span>
+    
+<span class="nc" id="L30">    public CampaignCreateRequest(Long userId, String name, Campaign.CampaignType type) {</span>
+<span class="nc" id="L31">        this.userId = userId;</span>
+<span class="nc" id="L32">        this.name = name;</span>
+<span class="nc" id="L33">        this.type = type;</span>
+<span class="nc" id="L34">    }</span>
+    
+    // Getters and Setters
+<span class="nc" id="L37">    public Long getUserId() { return userId; }</span>
+<span class="nc" id="L38">    public void setUserId(Long userId) { this.userId = userId; }</span>
+    
+<span class="nc" id="L40">    public String getName() { return name; }</span>
+<span class="nc" id="L41">    public void setName(String name) { this.name = name; }</span>
+    
+<span class="nc" id="L43">    public String getDescription() { return description; }</span>
+<span class="nc" id="L44">    public void setDescription(String description) { this.description = description; }</span>
+    
+<span class="nc" id="L46">    public Campaign.CampaignType getType() { return type; }</span>
+<span class="nc" id="L47">    public void setType(Campaign.CampaignType type) { this.type = type; }</span>
+    
+<span class="nc" id="L49">    public String getTargetAudience() { return targetAudience; }</span>
+<span class="nc" id="L50">    public void setTargetAudience(String targetAudience) { this.targetAudience = targetAudience; }</span>
+    
+<span class="nc" id="L52">    public Double getBudget() { return budget; }</span>
+<span class="nc" id="L53">    public void setBudget(Double budget) { this.budget = budget; }</span>
+    
+<span class="nc" id="L55">    public LocalDateTime getStartDate() { return startDate; }</span>
+<span class="nc" id="L56">    public void setStartDate(LocalDateTime startDate) { this.startDate = startDate; }</span>
+    
+<span class="nc" id="L58">    public LocalDateTime getEndDate() { return endDate; }</span>
+<span class="nc" id="L59">    public void setEndDate(LocalDateTime endDate) { this.endDate = endDate; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

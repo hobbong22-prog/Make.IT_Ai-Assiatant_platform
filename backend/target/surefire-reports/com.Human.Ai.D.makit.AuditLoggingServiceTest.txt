@@ -1,0 +1,151 @@
+-------------------------------------------------------------------------------
+Test set: com.Human.Ai.D.makit.AuditLoggingServiceTest
+-------------------------------------------------------------------------------
+Tests run: 16, Failures: 0, Errors: 10, Skipped: 0, Time elapsed: 1.178 s <<< FAILURE! -- in com.Human.Ai.D.makit.AuditLoggingServiceTest
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testGetAuditLogsForUser_Success -- Time elapsed: 0.018 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testGetAuditLogsByDateRange_Success -- Time elapsed: 0.005 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testGetActionStatistics_Success -- Time elapsed: 0.007 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testGetAuditLogsByAction_Success -- Time elapsed: 0.006 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testGetUserActivityStatistics_Success -- Time elapsed: 0.004 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testGetSecurityEvents_Success -- Time elapsed: 0.004 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testGetFailedLoginAttempts_Success -- Time elapsed: 0.004 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testLog_WithNullUser_Success -- Time elapsed: 0.008 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testLogSystemEvent_Success -- Time elapsed: 0.005 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+
+com.Human.Ai.D.makit.AuditLoggingServiceTest.testLogForUser_Success -- Time elapsed: 0.005 s <<< ERROR!
+org.mockito.exceptions.misusing.UnnecessaryStubbingException: 
+
+Unnecessary stubbings detected.
+Clean & maintainable test code requires zero unnecessary code.
+Following stubbings are unnecessary (click to navigate to relevant line of code):
+  1. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:84)
+  2. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:85)
+  3. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:86)
+  4. -> at com.Human.Ai.D.makit.AuditLoggingServiceTest.setUp(AuditLoggingServiceTest.java:87)
+Please remove unnecessary stubbings or use 'lenient' strictness. More info: javadoc for UnnecessaryStubbingException class.
+	at org.mockito.junit.jupiter.MockitoExtension.afterEach(MockitoExtension.java:186)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+	at java.base/java.util.ArrayList.forEach(ArrayList.java:1604)
+

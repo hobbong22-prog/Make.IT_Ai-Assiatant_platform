@@ -1,0 +1,11 @@
+com/t4micro/makit/integration/CognitoIntegrationBasicTest.class
+com/t4micro/makit/domain/UserRoleTest.class
+com/t4micro/makit/service/CampaignAnalyticsServiceTest.class
+com/t4micro/makit/service/RAGChatbotServiceIntegrationTest.class
+com/t4micro/makit/MakitPlatformApplicationTests.class
+com/t4micro/makit/service/AuthServiceCognitoIntegrationTest.class
+com/t4micro/makit/service/CognitoAuthenticationServiceIntegrationTest.class
+com/t4micro/makit/service/RoleBasedAccessControlIntegrationTest.class
+com/t4micro/makit/integration/AsyncProcessingIntegrationTest.class
+com/t4micro/makit/service/CacheServiceTest.class
+com/t4micro/makit/service/OptimizationRecommendationServiceIntegrationTest.class

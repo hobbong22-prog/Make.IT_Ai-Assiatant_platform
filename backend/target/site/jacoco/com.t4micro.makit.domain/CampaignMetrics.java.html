@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CampaignMetrics.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.domain</a> &gt; <span class="el_source">CampaignMetrics.java</span></div><h1>CampaignMetrics.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.domain;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;campaign_metrics&quot;)
+public class CampaignMetrics {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    private Integer impressions;
+    private Integer clicks;
+    private Integer conversions;
+    private Double ctr; // Click-through rate
+    private Double cpc; // Cost per click
+    private Double cpa; // Cost per acquisition
+    private Double spend;
+    private Double revenue;
+    private Double roi; // Return on investment
+    
+    @Column(name = &quot;recorded_at&quot;)
+    private LocalDateTime recordedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;campaign_id&quot;)
+    private Campaign campaign;
+
+    // Constructors
+<span class="fc" id="L31">    public CampaignMetrics() {}</span>
+
+<span class="nc" id="L33">    public CampaignMetrics(Campaign campaign) {</span>
+<span class="nc" id="L34">        this.campaign = campaign;</span>
+<span class="nc" id="L35">        this.recordedAt = LocalDateTime.now();</span>
+<span class="nc" id="L36">    }</span>
+
+    // Getters and Setters
+<span class="nc" id="L39">    public Long getId() { return id; }</span>
+<span class="nc" id="L40">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="nc" id="L42">    public Integer getImpressions() { return impressions; }</span>
+<span class="nc" id="L43">    public void setImpressions(Integer impressions) { this.impressions = impressions; }</span>
+
+<span class="nc" id="L45">    public Integer getClicks() { return clicks; }</span>
+<span class="nc" id="L46">    public void setClicks(Integer clicks) { this.clicks = clicks; }</span>
+
+<span class="nc" id="L48">    public Integer getConversions() { return conversions; }</span>
+<span class="nc" id="L49">    public void setConversions(Integer conversions) { this.conversions = conversions; }</span>
+
+<span class="nc" id="L51">    public Double getCtr() { return ctr; }</span>
+<span class="nc" id="L52">    public void setCtr(Double ctr) { this.ctr = ctr; }</span>
+
+<span class="nc" id="L54">    public Double getCpc() { return cpc; }</span>
+<span class="nc" id="L55">    public void setCpc(Double cpc) { this.cpc = cpc; }</span>
+
+<span class="nc" id="L57">    public Double getCpa() { return cpa; }</span>
+<span class="nc" id="L58">    public void setCpa(Double cpa) { this.cpa = cpa; }</span>
+
+<span class="nc" id="L60">    public Double getSpend() { return spend; }</span>
+<span class="nc" id="L61">    public void setSpend(Double spend) { this.spend = spend; }</span>
+
+<span class="nc" id="L63">    public Double getRevenue() { return revenue; }</span>
+<span class="nc" id="L64">    public void setRevenue(Double revenue) { this.revenue = revenue; }</span>
+
+<span class="nc" id="L66">    public Double getRoi() { return roi; }</span>
+<span class="nc" id="L67">    public void setRoi(Double roi) { this.roi = roi; }</span>
+
+<span class="nc" id="L69">    public LocalDateTime getRecordedAt() { return recordedAt; }</span>
+<span class="nc" id="L70">    public void setRecordedAt(LocalDateTime recordedAt) { this.recordedAt = recordedAt; }</span>
+
+<span class="nc" id="L72">    public Campaign getCampaign() { return campaign; }</span>
+<span class="nc" id="L73">    public void setCampaign(Campaign campaign) { this.campaign = campaign; }</span>
+
+    // Helper methods
+    public void calculateMetrics() {
+<span class="nc bnc" id="L77" title="All 6 branches missed.">        if (impressions != null &amp;&amp; clicks != null &amp;&amp; impressions &gt; 0) {</span>
+<span class="nc" id="L78">            this.ctr = (double) clicks / impressions * 100;</span>
+        }
+        
+<span class="nc bnc" id="L81" title="All 6 branches missed.">        if (spend != null &amp;&amp; clicks != null &amp;&amp; clicks &gt; 0) {</span>
+<span class="nc" id="L82">            this.cpc = spend / clicks;</span>
+        }
+        
+<span class="nc bnc" id="L85" title="All 6 branches missed.">        if (spend != null &amp;&amp; conversions != null &amp;&amp; conversions &gt; 0) {</span>
+<span class="nc" id="L86">            this.cpa = spend / conversions;</span>
+        }
+        
+<span class="nc bnc" id="L89" title="All 6 branches missed.">        if (revenue != null &amp;&amp; spend != null &amp;&amp; spend &gt; 0) {</span>
+<span class="nc" id="L90">            this.roi = (revenue - spend) / spend * 100;</span>
+        }
+<span class="nc" id="L92">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

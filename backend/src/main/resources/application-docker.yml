@@ -1,0 +1,66 @@
+spring:
+  application:
+    name: makit-platform
+  
+  datasource:
+    url: ${SPRING_DATASOURCE_URL:jdbc:postgresql://database:5432/makit}
+    username: ${SPRING_DATASOURCE_USERNAME:makit_user}
+    password: ${SPRING_DATASOURCE_PASSWORD:makit_password}
+    driver-class-name: org.postgresql.Driver
+  
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+        format_sql: true
+  
+  # Redis 설정
+  data:
+    redis:
+      host: redis
+      port: 6379
+      timeout: 2000ms
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+  
+  # AWS 설정
+  cloud:
+    aws:
+      region:
+        static: ${AWS_REGION:ap-northeast-2}
+      credentials:
+        access-key: ${AWS_ACCESS_KEY_ID:}
+        secret-key: ${AWS_SECRET_ACCESS_KEY:}
+
+# 액추에이터 설정 (헬스체크용)
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics
+  endpoint:
+    health:
+      show-details: when-authorized
+
+# 로깅 설정
+logging:
+  level:
+    com.Human.Ai.D.makit: INFO
+    org.springframework.security: DEBUG
+  file:
+    name: /app/logs/makit-platform.log
+  pattern:
+    file: "%d{yyyy-MM-dd HH:mm:ss} [%thread] %-5level %logger{36} - %msg%n"
+
+# 서버 설정
+server:
+  port: 8080
+  servlet:
+    context-path: /

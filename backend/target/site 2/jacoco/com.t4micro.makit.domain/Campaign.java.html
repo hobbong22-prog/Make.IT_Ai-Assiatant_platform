@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Campaign.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.domain</a> &gt; <span class="el_source">Campaign.java</span></div><h1>Campaign.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+@Entity
+@Table(name = &quot;campaigns&quot;)
+public class Campaign {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    private String name;
+    
+    private String description;
+    
+    @Enumerated(EnumType.STRING)
+    private CampaignStatus status;
+    
+    @Enumerated(EnumType.STRING)
+    private CampaignType type;
+    
+    private String targetAudience;
+    private Double budget;
+    private LocalDateTime startDate;
+    private LocalDateTime endDate;
+    
+    @Column(name = &quot;created_at&quot;)
+    private LocalDateTime createdAt;
+    
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;user_id&quot;)
+    @JsonIgnore
+    private User user;
+
+<span class="fc" id="L44">    @OneToMany(mappedBy = &quot;campaign&quot;, cascade = CascadeType.ALL, fetch = FetchType.LAZY)</span>
+    private List&lt;Content&gt; contents = new ArrayList&lt;&gt;();
+
+<span class="fc" id="L47">    @OneToMany(mappedBy = &quot;campaign&quot;, cascade = CascadeType.ALL, fetch = FetchType.LAZY)</span>
+    private List&lt;CampaignMetrics&gt; metrics = new ArrayList&lt;&gt;();
+
+    // Enums
+<span class="fc" id="L51">    public enum CampaignStatus {</span>
+<span class="fc" id="L52">        DRAFT, ACTIVE, PAUSED, COMPLETED, CANCELLED</span>
+    }
+
+<span class="fc" id="L55">    public enum CampaignType {</span>
+<span class="fc" id="L56">        EMAIL, SOCIAL_MEDIA, SEARCH_ADS, DISPLAY_ADS, CONTENT_MARKETING</span>
+    }
+
+    // Constructors
+<span class="fc" id="L60">    public Campaign() {}</span>
+
+<span class="fc" id="L62">    public Campaign(String name, String description, CampaignType type, User user) {</span>
+<span class="fc" id="L63">        this.name = name;</span>
+<span class="fc" id="L64">        this.description = description;</span>
+<span class="fc" id="L65">        this.type = type;</span>
+<span class="fc" id="L66">        this.user = user;</span>
+<span class="fc" id="L67">        this.status = CampaignStatus.DRAFT;</span>
+<span class="fc" id="L68">        this.createdAt = LocalDateTime.now();</span>
+<span class="fc" id="L69">        this.updatedAt = LocalDateTime.now();</span>
+<span class="fc" id="L70">    }</span>
+
+    // Getters and Setters
+<span class="nc" id="L73">    public Long getId() { return id; }</span>
+<span class="nc" id="L74">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="nc" id="L76">    public String getName() { return name; }</span>
+<span class="nc" id="L77">    public void setName(String name) { this.name = name; }</span>
+
+<span class="nc" id="L79">    public String getDescription() { return description; }</span>
+<span class="nc" id="L80">    public void setDescription(String description) { this.description = description; }</span>
+
+<span class="nc" id="L82">    public CampaignStatus getStatus() { return status; }</span>
+<span class="fc" id="L83">    public void setStatus(CampaignStatus status) { this.status = status; }</span>
+
+<span class="nc" id="L85">    public CampaignType getType() { return type; }</span>
+<span class="nc" id="L86">    public void setType(CampaignType type) { this.type = type; }</span>
+
+<span class="nc" id="L88">    public String getTargetAudience() { return targetAudience; }</span>
+<span class="fc" id="L89">    public void setTargetAudience(String targetAudience) { this.targetAudience = targetAudience; }</span>
+
+<span class="nc" id="L91">    public Double getBudget() { return budget; }</span>
+<span class="fc" id="L92">    public void setBudget(Double budget) { this.budget = budget; }</span>
+
+<span class="nc" id="L94">    public LocalDateTime getStartDate() { return startDate; }</span>
+<span class="nc" id="L95">    public void setStartDate(LocalDateTime startDate) { this.startDate = startDate; }</span>
+
+<span class="nc" id="L97">    public LocalDateTime getEndDate() { return endDate; }</span>
+<span class="nc" id="L98">    public void setEndDate(LocalDateTime endDate) { this.endDate = endDate; }</span>
+
+<span class="nc" id="L100">    public LocalDateTime getCreatedAt() { return createdAt; }</span>
+<span class="nc" id="L101">    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }</span>
+
+<span class="nc" id="L103">    public LocalDateTime getUpdatedAt() { return updatedAt; }</span>
+<span class="nc" id="L104">    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }</span>
+
+<span class="nc" id="L106">    public User getUser() { return user; }</span>
+<span class="nc" id="L107">    public void setUser(User user) { this.user = user; }</span>
+
+<span class="nc" id="L109">    public List&lt;Content&gt; getContents() { return contents; }</span>
+<span class="nc" id="L110">    public void setContents(List&lt;Content&gt; contents) { this.contents = contents; }</span>
+
+<span class="nc" id="L112">    public List&lt;CampaignMetrics&gt; getMetrics() { return metrics; }</span>
+<span class="nc" id="L113">    public void setMetrics(List&lt;CampaignMetrics&gt; metrics) { this.metrics = metrics; }</span>
+
+    @PreUpdate
+    public void preUpdate() {
+<span class="nc" id="L117">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L118">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

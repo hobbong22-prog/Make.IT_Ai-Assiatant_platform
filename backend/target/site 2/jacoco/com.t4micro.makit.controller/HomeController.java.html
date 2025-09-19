@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>HomeController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.controller</a> &gt; <span class="el_source">HomeController.java</span></div><h1>HomeController.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.controller;
+
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+
+@Controller
+<span class="fc" id="L9">public class HomeController {</span>
+    
+    @GetMapping(&quot;/&quot;)
+    @ResponseBody
+    public String home() {
+<span class="nc" id="L14">        return &quot;&quot;&quot;</span>
+            &lt;html&gt;
+            &lt;head&gt;
+                &lt;title&gt;MaKIT Platform API&lt;/title&gt;
+                &lt;style&gt;
+                    body { font-family: Arial, sans-serif; margin: 40px; }
+                    .container { max-width: 800px; margin: 0 auto; }
+                    .header { text-align: center; margin-bottom: 40px; }
+                    .api-section { margin-bottom: 30px; }
+                    .endpoint { background: #f5f5f5; padding: 10px; margin: 5px 0; border-radius: 5px; }
+                    .method { font-weight: bold; color: #007bff; }
+                &lt;/style&gt;
+            &lt;/head&gt;
+            &lt;body&gt;
+                &lt;div class=&quot;container&quot;&gt;
+                    &lt;div class=&quot;header&quot;&gt;
+                        &lt;h1&gt;🚀 MaKIT Platform API&lt;/h1&gt;
+                        &lt;p&gt;AI-powered Marketing Automation Platform by Human.Ai.D&lt;/p&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class=&quot;api-section&quot;&gt;
+                        &lt;h2&gt;🔐 Authentication API&lt;/h2&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/auth/login - 로그인
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/auth/register - 회원가입
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;GET&lt;/span&gt; /api/auth/me - 현재 사용자 정보
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class=&quot;api-section&quot;&gt;
+                        &lt;h2&gt;📝 Content Generation API&lt;/h2&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/content/generate/blog - 블로그 포스트 생성
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/content/generate/ad-copy - 광고 문구 생성
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/content/generate/social-media - 소셜 미디어 포스트 생성
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/content/generate/email - 이메일 템플릿 생성
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class=&quot;api-section&quot;&gt;
+                        &lt;h2&gt;📊 Campaign API&lt;/h2&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;GET&lt;/span&gt; /api/campaigns/user/{userId} - 사용자 캠페인 목록
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/campaigns - 캠페인 생성
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;GET&lt;/span&gt; /api/campaigns/{id}/metrics - 캠페인 메트릭스
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class=&quot;api-section&quot;&gt;
+                        &lt;h2&gt;🤖 Chatbot API&lt;/h2&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;POST&lt;/span&gt; /api/chat - AI 챗봇 대화
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;WS&lt;/span&gt; /ws - WebSocket 연결
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class=&quot;api-section&quot;&gt;
+                        &lt;h2&gt;🔧 Development Tools&lt;/h2&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;span class=&quot;method&quot;&gt;GET&lt;/span&gt; &lt;a href=&quot;/h2-console&quot; target=&quot;_blank&quot;&gt;/h2-console&lt;/a&gt; - H2 데이터베이스 콘솔
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                    
+                    &lt;div class=&quot;api-section&quot;&gt;
+                        &lt;h2&gt;👤 Demo Accounts&lt;/h2&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;strong&gt;관리자:&lt;/strong&gt; demo@t4micro.com / password123
+                        &lt;/div&gt;
+                        &lt;div class=&quot;endpoint&quot;&gt;
+                            &lt;strong&gt;마케터:&lt;/strong&gt; marketer@example.com / password123
+                        &lt;/div&gt;
+                    &lt;/div&gt;
+                &lt;/div&gt;
+            &lt;/body&gt;
+            &lt;/html&gt;
+            &quot;&quot;&quot;;
+    }
+    
+    @GetMapping(&quot;/health&quot;)
+    @ResponseBody
+    public String health() {
+<span class="nc" id="L111">        return &quot;OK&quot;;</span>
+    }
+    
+    @GetMapping(&quot;/api&quot;)
+    @ResponseBody
+    public String apiInfo() {
+<span class="nc" id="L117">        return &quot;&quot;&quot;</span>
+            {
+                &quot;service&quot;: &quot;MaKIT Platform API&quot;,
+                &quot;version&quot;: &quot;1.0.0&quot;,
+                &quot;status&quot;: &quot;running&quot;,
+                &quot;endpoints&quot;: {
+                    &quot;auth&quot;: &quot;/api/auth/*&quot;,
+                    &quot;content&quot;: &quot;/api/content/*&quot;,
+                    &quot;campaigns&quot;: &quot;/api/campaigns/*&quot;,
+                    &quot;chat&quot;: &quot;/api/chat&quot;,
+                    &quot;websocket&quot;: &quot;/ws&quot;
+                },
+                &quot;demo_accounts&quot;: {
+                    &quot;admin&quot;: &quot;demo@t4micro.com / password123&quot;,
+                    &quot;marketer&quot;: &quot;marketer@example.com / password123&quot;
+                }
+            }
+            &quot;&quot;&quot;;
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>KnowledgeBaseController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.controller</a> &gt; <span class="el_source">KnowledgeBaseController.java</span></div><h1>KnowledgeBaseController.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.controller;
+
+import com.t4micro.makit.domain.KnowledgeDocument;
+import com.t4micro.makit.service.KnowledgeBaseManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+
+@RestController
+@RequestMapping(&quot;/api/knowledge-base&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+<span class="fc" id="L16">public class KnowledgeBaseController {</span>
+    
+    @Autowired
+    private KnowledgeBaseManager knowledgeBaseManager;
+    
+    @PostMapping(&quot;/documents&quot;)
+    public CompletableFuture&lt;ResponseEntity&lt;KnowledgeDocument&gt;&gt; addDocument(
+            @RequestBody AddDocumentRequest request) {
+        
+<span class="nc" id="L25">        return knowledgeBaseManager.addDocument(</span>
+<span class="nc" id="L26">                request.getTitle(),</span>
+<span class="nc" id="L27">                request.getContent(),</span>
+<span class="nc" id="L28">                request.getDocumentType(),</span>
+<span class="nc" id="L29">                request.getSource(),</span>
+<span class="nc" id="L30">                request.getTags()</span>
+<span class="nc" id="L31">        ).thenApply(document -&gt; ResponseEntity.ok(document))</span>
+<span class="nc" id="L32">         .exceptionally(ex -&gt; ResponseEntity.badRequest().build());</span>
+    }
+    
+    @GetMapping(&quot;/documents/{documentId}&quot;)
+    public ResponseEntity&lt;KnowledgeDocument&gt; getDocument(@PathVariable String documentId) {
+<span class="nc" id="L37">        Optional&lt;KnowledgeDocument&gt; document = knowledgeBaseManager.getDocument(documentId);</span>
+<span class="nc" id="L38">        return document.map(ResponseEntity::ok)</span>
+<span class="nc" id="L39">                      .orElse(ResponseEntity.notFound().build());</span>
+    }
+    
+    @GetMapping(&quot;/documents&quot;)
+    public ResponseEntity&lt;List&lt;KnowledgeDocument&gt;&gt; getAllDocuments() {
+<span class="nc" id="L44">        List&lt;KnowledgeDocument&gt; documents = knowledgeBaseManager.getIndexedDocuments();</span>
+<span class="nc" id="L45">        return ResponseEntity.ok(documents);</span>
+    }
+    
+    @GetMapping(&quot;/documents/search&quot;)
+    public ResponseEntity&lt;List&lt;KnowledgeDocument&gt;&gt; searchDocuments(@RequestParam String keyword) {
+<span class="nc" id="L50">        List&lt;KnowledgeDocument&gt; documents = knowledgeBaseManager.searchDocuments(keyword);</span>
+<span class="nc" id="L51">        return ResponseEntity.ok(documents);</span>
+    }
+    
+    @GetMapping(&quot;/documents/by-tag&quot;)
+    public ResponseEntity&lt;List&lt;KnowledgeDocument&gt;&gt; getDocumentsByTag(@RequestParam String tag) {
+<span class="nc" id="L56">        List&lt;KnowledgeDocument&gt; documents = knowledgeBaseManager.getDocumentsByTag(tag);</span>
+<span class="nc" id="L57">        return ResponseEntity.ok(documents);</span>
+    }
+    
+    @GetMapping(&quot;/documents/by-type&quot;)
+    public ResponseEntity&lt;List&lt;KnowledgeDocument&gt;&gt; getDocumentsByType(@RequestParam String type) {
+<span class="nc" id="L62">        List&lt;KnowledgeDocument&gt; documents = knowledgeBaseManager.getDocumentsByType(type);</span>
+<span class="nc" id="L63">        return ResponseEntity.ok(documents);</span>
+    }
+    
+    @PutMapping(&quot;/documents/{documentId}&quot;)
+    public CompletableFuture&lt;ResponseEntity&lt;KnowledgeDocument&gt;&gt; updateDocument(
+            @PathVariable String documentId,
+            @RequestBody UpdateDocumentRequest request) {
+        
+<span class="nc" id="L71">        return knowledgeBaseManager.updateDocument(</span>
+                documentId,
+<span class="nc" id="L73">                request.getTitle(),</span>
+<span class="nc" id="L74">                request.getContent(),</span>
+<span class="nc" id="L75">                request.getTags()</span>
+<span class="nc" id="L76">        ).thenApply(document -&gt; ResponseEntity.ok(document))</span>
+<span class="nc" id="L77">         .exceptionally(ex -&gt; ResponseEntity.badRequest().build());</span>
+    }
+    
+    @DeleteMapping(&quot;/documents/{documentId}&quot;)
+    public ResponseEntity&lt;Void&gt; deleteDocument(@PathVariable String documentId) {
+        try {
+<span class="nc" id="L83">            knowledgeBaseManager.deleteDocument(documentId);</span>
+<span class="nc" id="L84">            return ResponseEntity.ok().build();</span>
+<span class="nc" id="L85">        } catch (Exception e) {</span>
+<span class="nc" id="L86">            return ResponseEntity.notFound().build();</span>
+        }
+    }
+    
+    @PostMapping(&quot;/rebuild-index&quot;)
+    public CompletableFuture&lt;ResponseEntity&lt;String&gt;&gt; rebuildIndex() {
+<span class="nc" id="L92">        return knowledgeBaseManager.rebuildIndex()</span>
+<span class="nc" id="L93">                .thenApply(v -&gt; ResponseEntity.ok(&quot;Index rebuild started&quot;))</span>
+<span class="nc" id="L94">                .exceptionally(ex -&gt; ResponseEntity.badRequest().body(&quot;Failed to rebuild index&quot;));</span>
+    }
+    
+    @GetMapping(&quot;/stats&quot;)
+    public ResponseEntity&lt;KnowledgeBaseManager.KnowledgeBaseStats&gt; getStats() {
+<span class="nc" id="L99">        KnowledgeBaseManager.KnowledgeBaseStats stats = knowledgeBaseManager.getStats();</span>
+<span class="nc" id="L100">        return ResponseEntity.ok(stats);</span>
+    }
+    
+    // Request DTOs
+<span class="nc" id="L104">    public static class AddDocumentRequest {</span>
+        private String title;
+        private String content;
+        private String documentType;
+        private String source;
+        private List&lt;String&gt; tags;
+        
+        // Getters and Setters
+<span class="nc" id="L112">        public String getTitle() { return title; }</span>
+<span class="nc" id="L113">        public void setTitle(String title) { this.title = title; }</span>
+        
+<span class="nc" id="L115">        public String getContent() { return content; }</span>
+<span class="nc" id="L116">        public void setContent(String content) { this.content = content; }</span>
+        
+<span class="nc" id="L118">        public String getDocumentType() { return documentType; }</span>
+<span class="nc" id="L119">        public void setDocumentType(String documentType) { this.documentType = documentType; }</span>
+        
+<span class="nc" id="L121">        public String getSource() { return source; }</span>
+<span class="nc" id="L122">        public void setSource(String source) { this.source = source; }</span>
+        
+<span class="nc" id="L124">        public List&lt;String&gt; getTags() { return tags; }</span>
+<span class="nc" id="L125">        public void setTags(List&lt;String&gt; tags) { this.tags = tags; }</span>
+    }
+    
+<span class="nc" id="L128">    public static class UpdateDocumentRequest {</span>
+        private String title;
+        private String content;
+        private List&lt;String&gt; tags;
+        
+        // Getters and Setters
+<span class="nc" id="L134">        public String getTitle() { return title; }</span>
+<span class="nc" id="L135">        public void setTitle(String title) { this.title = title; }</span>
+        
+<span class="nc" id="L137">        public String getContent() { return content; }</span>
+<span class="nc" id="L138">        public void setContent(String content) { this.content = content; }</span>
+        
+<span class="nc" id="L140">        public List&lt;String&gt; getTags() { return tags; }</span>
+<span class="nc" id="L141">        public void setTags(List&lt;String&gt; tags) { this.tags = tags; }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

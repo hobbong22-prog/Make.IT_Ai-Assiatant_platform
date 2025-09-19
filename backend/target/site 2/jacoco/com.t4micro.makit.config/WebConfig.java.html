@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>WebConfig.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.config</a> &gt; <span class="el_source">WebConfig.java</span></div><h1>WebConfig.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.config;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
+import org.springframework.web.servlet.config.annotation.ViewControllerRegistry;
+import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+
+@Configuration
+<span class="fc" id="L9">public class WebConfig implements WebMvcConfigurer {</span>
+    
+    @Override
+    public void addResourceHandlers(ResourceHandlerRegistry registry) {
+        // 정적 파일 서빙 설정
+<span class="fc" id="L14">        registry.addResourceHandler(&quot;/static/**&quot;)</span>
+<span class="fc" id="L15">                .addResourceLocations(&quot;classpath:/static/&quot;);</span>
+        
+<span class="fc" id="L17">        registry.addResourceHandler(&quot;/css/**&quot;)</span>
+<span class="fc" id="L18">                .addResourceLocations(&quot;classpath:/static/css/&quot;);</span>
+        
+<span class="fc" id="L20">        registry.addResourceHandler(&quot;/js/**&quot;)</span>
+<span class="fc" id="L21">                .addResourceLocations(&quot;classpath:/static/js/&quot;);</span>
+        
+<span class="fc" id="L23">        registry.addResourceHandler(&quot;/images/**&quot;)</span>
+<span class="fc" id="L24">                .addResourceLocations(&quot;classpath:/static/images/&quot;);</span>
+<span class="fc" id="L25">    }</span>
+    
+    @Override
+    public void addViewControllers(ViewControllerRegistry registry) {
+        // 기본 뷰 컨트롤러 설정
+<span class="fc" id="L30">        registry.addViewController(&quot;/login&quot;).setViewName(&quot;forward:/login.html&quot;);</span>
+<span class="fc" id="L31">        registry.addViewController(&quot;/dashboard&quot;).setViewName(&quot;forward:/index.html&quot;);</span>
+<span class="fc" id="L32">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

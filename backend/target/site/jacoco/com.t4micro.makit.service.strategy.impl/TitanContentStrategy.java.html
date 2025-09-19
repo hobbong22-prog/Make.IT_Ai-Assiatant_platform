@@ -1,0 +1,125 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TitanContentStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.service.strategy.impl</a> &gt; <span class="el_source">TitanContentStrategy.java</span></div><h1>TitanContentStrategy.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.service.strategy.impl;
+
+import com.t4micro.makit.dto.ContentGenerationRequest;
+import com.t4micro.makit.domain.Content;
+import com.t4micro.makit.domain.User;
+import com.t4micro.makit.repository.ContentRepository;
+import com.t4micro.makit.service.ai.BedrockService;
+import com.t4micro.makit.service.strategy.ContentGenerationStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * Amazon Titan 모델을 사용한 콘텐츠 생성 전략
+ * Human.Ai.D MaKIT 플랫폼의 기본 텍스트 생성 전략
+ */
+@Component
+<span class="fc" id="L23">public class TitanContentStrategy implements ContentGenerationStrategy {</span>
+    
+<span class="fc" id="L25">    private static final Logger logger = LoggerFactory.getLogger(TitanContentStrategy.class);</span>
+    
+    @Autowired
+    private BedrockService bedrockService;
+    
+    @Autowired
+    private ContentRepository contentRepository;
+    
+    @Override
+    @Async
+    public CompletableFuture&lt;Content&gt; generateContent(ContentGenerationRequest request, User user) {
+<span class="nc" id="L36">        logger.info(&quot;Titan 모델을 사용하여 콘텐츠 생성 시작 - 사용자: {}, 타입: {}&quot;, </span>
+<span class="nc" id="L37">                   user.getUsername(), request.getContentType());</span>
+        
+        try {
+<span class="nc" id="L40">            String prompt = buildPrompt(request);</span>
+<span class="nc" id="L41">            String generatedText = bedrockService.generateTextWithTitan(prompt, 1000);</span>
+            
+<span class="nc" id="L43">            Content content = new Content(generateTitle(request), request.getContentType(), user);</span>
+<span class="nc" id="L44">            content.setBody(generatedText);</span>
+<span class="nc" id="L45">            content.setAiModel(&quot;amazon.titan-text-express-v1&quot;);</span>
+<span class="nc" id="L46">            content.setPrompt(prompt);</span>
+<span class="nc" id="L47">            content.setStatus(Content.ContentStatus.GENERATED);</span>
+            
+<span class="nc" id="L49">            Content savedContent = contentRepository.save(content);</span>
+            
+<span class="nc" id="L51">            logger.info(&quot;Titan 모델로 콘텐츠 생성 완료 - ID: {}&quot;, savedContent.getId());</span>
+<span class="nc" id="L52">            return CompletableFuture.completedFuture(savedContent);</span>
+            
+<span class="nc" id="L54">        } catch (Exception e) {</span>
+<span class="nc" id="L55">            logger.error(&quot;Titan 모델 콘텐츠 생성 실패 - 사용자: {}&quot;, user.getUsername(), e);</span>
+<span class="nc" id="L56">            return CompletableFuture.failedFuture(e);</span>
+        }
+    }
+    
+    @Override
+    public boolean supports(Content.ContentType contentType) {
+<span class="nc bnc" id="L62" title="All 6 branches missed.">        return contentType == Content.ContentType.BLOG_POST || </span>
+               contentType == Content.ContentType.AD_COPY ||
+               contentType == Content.ContentType.EMAIL_TEMPLATE;
+    }
+    
+    @Override
+    public String getModelId() {
+<span class="nc" id="L69">        return &quot;amazon.titan-text-express-v1&quot;;</span>
+    }
+    
+    @Override
+    public int getPriority() {
+<span class="nc" id="L74">        return 10; // 높은 우선순위</span>
+    }
+    
+    private String buildPrompt(ContentGenerationRequest request) {
+<span class="nc" id="L78">        StringBuilder prompt = new StringBuilder();</span>
+        
+<span class="nc" id="L80">        prompt.append(&quot;Human.Ai.D MaKIT 플랫폼을 위한 &quot;);</span>
+        
+<span class="nc bnc" id="L82" title="All 4 branches missed.">        switch (request.getContentType()) {</span>
+            case BLOG_POST:
+<span class="nc" id="L84">                prompt.append(&quot;블로그 포스트를 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L85">                break;</span>
+            case AD_COPY:
+<span class="nc" id="L87">                prompt.append(&quot;광고 카피를 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L88">                break;</span>
+            case EMAIL_TEMPLATE:
+<span class="nc" id="L90">                prompt.append(&quot;이메일 템플릿을 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L91">                break;</span>
+            default:
+<span class="nc" id="L93">                prompt.append(&quot;콘텐츠를 작성해주세요.\n\n&quot;);</span>
+        }
+        
+<span class="nc bnc" id="L96" title="All 4 branches missed.">        if (request.getKeywords() != null &amp;&amp; !request.getKeywords().isEmpty()) {</span>
+<span class="nc" id="L97">            prompt.append(&quot;키워드: &quot;).append(request.getKeywords()).append(&quot;\n&quot;);</span>
+        }
+        
+<span class="nc bnc" id="L100" title="All 4 branches missed.">        if (request.getTargetAudience() != null &amp;&amp; !request.getTargetAudience().isEmpty()) {</span>
+<span class="nc" id="L101">            prompt.append(&quot;타겟 오디언스: &quot;).append(request.getTargetAudience()).append(&quot;\n&quot;);</span>
+        }
+        
+<span class="nc bnc" id="L104" title="All 4 branches missed.">        if (request.getProduct() != null &amp;&amp; !request.getProduct().isEmpty()) {</span>
+<span class="nc" id="L105">            prompt.append(&quot;제품/서비스: &quot;).append(request.getProduct()).append(&quot;\n&quot;);</span>
+        }
+        
+<span class="nc" id="L108">        prompt.append(&quot;\n요구사항:\n&quot;);</span>
+<span class="nc" id="L109">        prompt.append(&quot;- 한국어로 작성\n&quot;);</span>
+<span class="nc" id="L110">        prompt.append(&quot;- 전문적이고 매력적인 톤\n&quot;);</span>
+<span class="nc" id="L111">        prompt.append(&quot;- Human.Ai.D의 브랜드 가치 반영\n&quot;);</span>
+<span class="nc" id="L112">        prompt.append(&quot;- SEO 최적화 고려\n&quot;);</span>
+<span class="nc" id="L113">        prompt.append(&quot;- 독자의 관심을 끌 수 있는 구성\n&quot;);</span>
+        
+<span class="nc" id="L115">        return prompt.toString();</span>
+    }
+    
+    private String generateTitle(ContentGenerationRequest request) {
+<span class="nc bnc" id="L119" title="All 4 branches missed.">        if (request.getProduct() != null &amp;&amp; !request.getProduct().isEmpty()) {</span>
+<span class="nc" id="L120">            return request.getProduct() + &quot; - &quot; + request.getContentType().name();</span>
+        }
+<span class="nc" id="L122">        return &quot;Human.Ai.D MaKIT - &quot; + request.getContentType().name();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

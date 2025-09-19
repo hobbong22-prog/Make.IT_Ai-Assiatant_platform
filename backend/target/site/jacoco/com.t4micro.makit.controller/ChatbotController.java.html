@@ -1,0 +1,195 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChatbotController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.controller</a> &gt; <span class="el_source">ChatbotController.java</span></div><h1>ChatbotController.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.controller;
+
+import com.t4micro.makit.dto.ChatMessage;
+import com.t4micro.makit.domain.User;
+import com.t4micro.makit.service.RAGChatbotService;
+import com.t4micro.makit.service.ai.BedrockService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.messaging.handler.annotation.MessageMapping;
+import org.springframework.messaging.handler.annotation.SendTo;
+import org.springframework.messaging.simp.SimpMessagingTemplate;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.*;
+
+@Controller
+<span class="fc" id="L17">public class ChatbotController {</span>
+    
+    @Autowired
+    private BedrockService bedrockService;
+    
+    @Autowired
+    private RAGChatbotService ragChatbotService;
+    
+    @Autowired
+    private SimpMessagingTemplate messagingTemplate;
+    
+    @MessageMapping(&quot;/chat&quot;)
+    @SendTo(&quot;/topic/chat&quot;)
+    public ChatMessage handleChatMessage(ChatMessage message) {
+        try {
+<span class="nc" id="L32">            User user = getCurrentUser();</span>
+<span class="nc" id="L33">            String sessionId = getSessionId();</span>
+            
+            // Use RAG chatbot service for enhanced responses
+<span class="nc" id="L36">            RAGChatbotService.ChatbotResponse ragResponse = </span>
+<span class="nc" id="L37">                    ragChatbotService.processMessage(message.getContent(), user, sessionId);</span>
+            
+<span class="nc" id="L39">            ChatMessage response = new ChatMessage();</span>
+<span class="nc" id="L40">            response.setSender(&quot;MaKIT Assistant&quot;);</span>
+<span class="nc" id="L41">            response.setContent(ragResponse.getMessage());</span>
+<span class="nc" id="L42">            response.setType(ChatMessage.MessageType.CHAT);</span>
+<span class="nc" id="L43">            response.setTimestamp(System.currentTimeMillis());</span>
+            
+            // Handle escalation if needed
+<span class="nc bnc" id="L46" title="All 2 branches missed.">            if (ragResponse.shouldEscalate()) {</span>
+                // Send escalation notification
+<span class="nc" id="L48">                messagingTemplate.convertAndSend(&quot;/topic/escalation&quot;, </span>
+<span class="nc" id="L49">                    &quot;User &quot; + user.getUsername() + &quot; needs human support: &quot; + ragResponse.getEscalationReason());</span>
+            }
+            
+<span class="nc" id="L52">            return response;</span>
+            
+<span class="nc" id="L54">        } catch (Exception e) {</span>
+<span class="nc" id="L55">            ChatMessage errorResponse = new ChatMessage();</span>
+<span class="nc" id="L56">            errorResponse.setSender(&quot;MaKIT Assistant&quot;);</span>
+<span class="nc" id="L57">            errorResponse.setContent(&quot;죄송합니다. 일시적인 오류가 발생했습니다. 다시 시도해 주세요.&quot;);</span>
+<span class="nc" id="L58">            errorResponse.setType(ChatMessage.MessageType.ERROR);</span>
+<span class="nc" id="L59">            errorResponse.setTimestamp(System.currentTimeMillis());</span>
+            
+<span class="nc" id="L61">            return errorResponse;</span>
+        }
+    }
+    
+    @PostMapping(&quot;/api/chat&quot;)
+    @ResponseBody
+    public ChatbotResponseDto handleRestChatMessage(@RequestBody ChatMessage message, 
+                                                   @RequestParam(required = false) String sessionId) {
+        try {
+<span class="nc" id="L70">            User user = getCurrentUser();</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            if (sessionId == null) {</span>
+<span class="nc" id="L72">                sessionId = getSessionId();</span>
+            }
+            
+            // Use RAG chatbot service for enhanced responses
+<span class="nc" id="L76">            RAGChatbotService.ChatbotResponse ragResponse = </span>
+<span class="nc" id="L77">                    ragChatbotService.processMessage(message.getContent(), user, sessionId);</span>
+            
+<span class="nc" id="L79">            ChatMessage response = new ChatMessage();</span>
+<span class="nc" id="L80">            response.setSender(&quot;MaKIT Assistant&quot;);</span>
+<span class="nc" id="L81">            response.setContent(ragResponse.getMessage());</span>
+<span class="nc" id="L82">            response.setType(ChatMessage.MessageType.CHAT);</span>
+<span class="nc" id="L83">            response.setTimestamp(System.currentTimeMillis());</span>
+            
+<span class="nc" id="L85">            return new ChatbotResponseDto(response, ragResponse.getConfidence(), </span>
+<span class="nc" id="L86">                                        ragResponse.shouldEscalate(), ragResponse.getEscalationReason());</span>
+            
+<span class="nc" id="L88">        } catch (Exception e) {</span>
+<span class="nc" id="L89">            ChatMessage errorResponse = new ChatMessage();</span>
+<span class="nc" id="L90">            errorResponse.setSender(&quot;MaKIT Assistant&quot;);</span>
+<span class="nc" id="L91">            errorResponse.setContent(&quot;죄송합니다. 일시적인 오류가 발생했습니다. 다시 시도해 주세요.&quot;);</span>
+<span class="nc" id="L92">            errorResponse.setType(ChatMessage.MessageType.ERROR);</span>
+<span class="nc" id="L93">            errorResponse.setTimestamp(System.currentTimeMillis());</span>
+            
+<span class="nc" id="L95">            return new ChatbotResponseDto(errorResponse, 0.0, false, null);</span>
+        }
+    }
+    
+    @GetMapping(&quot;/api/chat/context/{contextId}&quot;)
+    @ResponseBody
+    public ConversationContextDto getConversationContext(@PathVariable String contextId) {
+        // Implementation for getting conversation context
+        // This would require additional service methods
+<span class="nc" id="L104">        return new ConversationContextDto(contextId, &quot;active&quot;, System.currentTimeMillis());</span>
+    }
+    
+    private User getCurrentUser() {
+        // For now, return a mock user. In production, this would get the user from security context
+<span class="nc" id="L109">        Authentication auth = SecurityContextHolder.getContext().getAuthentication();</span>
+<span class="nc bnc" id="L110" title="All 4 branches missed.">        if (auth != null &amp;&amp; auth.isAuthenticated()) {</span>
+            // Extract user from authentication
+            // This is a simplified implementation
+<span class="nc" id="L113">            User user = new User();</span>
+<span class="nc" id="L114">            user.setId(1L);</span>
+<span class="nc" id="L115">            user.setUsername(auth.getName());</span>
+<span class="nc" id="L116">            return user;</span>
+        }
+        
+        // Fallback for testing
+<span class="nc" id="L120">        User user = new User();</span>
+<span class="nc" id="L121">        user.setId(1L);</span>
+<span class="nc" id="L122">        user.setUsername(&quot;testuser&quot;);</span>
+<span class="nc" id="L123">        return user;</span>
+    }
+    
+    private String getSessionId() {
+        // Generate or retrieve session ID
+<span class="nc" id="L128">        return &quot;session-&quot; + System.currentTimeMillis();</span>
+    }
+    
+    private String generateAIResponse(String userMessage) {
+        // Fallback method for simple AI responses
+<span class="nc" id="L133">        String systemPrompt = </span>
+            &quot;당신은 MaKIT 플랫폼의 AI 마케팅 어시스턴트입니다. &quot; +
+            &quot;사용자의 마케팅 관련 질문에 전문적이고 도움이 되는 답변을 제공하세요. &quot; +
+            &quot;콘텐츠 생성, 캠페인 최적화, 데이터 분석 등에 대한 조언을 할 수 있습니다. &quot; +
+            &quot;답변은 친근하면서도 전문적인 톤으로 작성하세요.&quot;;
+        
+<span class="nc" id="L139">        String fullPrompt = systemPrompt + &quot;\n\n사용자 질문: &quot; + userMessage + &quot;\n\n답변:&quot;;</span>
+        
+<span class="nc" id="L141">        return bedrockService.generateTextWithClaude(fullPrompt, 500);</span>
+    }
+    
+    // Response DTOs
+    public static class ChatbotResponseDto {
+        private ChatMessage message;
+        private double confidence;
+        private boolean shouldEscalate;
+        private String escalationReason;
+        
+        public ChatbotResponseDto(ChatMessage message, double confidence, 
+<span class="nc" id="L152">                                boolean shouldEscalate, String escalationReason) {</span>
+<span class="nc" id="L153">            this.message = message;</span>
+<span class="nc" id="L154">            this.confidence = confidence;</span>
+<span class="nc" id="L155">            this.shouldEscalate = shouldEscalate;</span>
+<span class="nc" id="L156">            this.escalationReason = escalationReason;</span>
+<span class="nc" id="L157">        }</span>
+        
+        // Getters and Setters
+<span class="nc" id="L160">        public ChatMessage getMessage() { return message; }</span>
+<span class="nc" id="L161">        public void setMessage(ChatMessage message) { this.message = message; }</span>
+        
+<span class="nc" id="L163">        public double getConfidence() { return confidence; }</span>
+<span class="nc" id="L164">        public void setConfidence(double confidence) { this.confidence = confidence; }</span>
+        
+<span class="nc" id="L166">        public boolean isShouldEscalate() { return shouldEscalate; }</span>
+<span class="nc" id="L167">        public void setShouldEscalate(boolean shouldEscalate) { this.shouldEscalate = shouldEscalate; }</span>
+        
+<span class="nc" id="L169">        public String getEscalationReason() { return escalationReason; }</span>
+<span class="nc" id="L170">        public void setEscalationReason(String escalationReason) { this.escalationReason = escalationReason; }</span>
+    }
+    
+    public static class ConversationContextDto {
+        private String contextId;
+        private String status;
+        private long lastActivity;
+        
+<span class="nc" id="L178">        public ConversationContextDto(String contextId, String status, long lastActivity) {</span>
+<span class="nc" id="L179">            this.contextId = contextId;</span>
+<span class="nc" id="L180">            this.status = status;</span>
+<span class="nc" id="L181">            this.lastActivity = lastActivity;</span>
+<span class="nc" id="L182">        }</span>
+        
+        // Getters and Setters
+<span class="nc" id="L185">        public String getContextId() { return contextId; }</span>
+<span class="nc" id="L186">        public void setContextId(String contextId) { this.contextId = contextId; }</span>
+        
+<span class="nc" id="L188">        public String getStatus() { return status; }</span>
+<span class="nc" id="L189">        public void setStatus(String status) { this.status = status; }</span>
+        
+<span class="nc" id="L191">        public long getLastActivity() { return lastActivity; }</span>
+<span class="nc" id="L192">        public void setLastActivity(long lastActivity) { this.lastActivity = lastActivity; }</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

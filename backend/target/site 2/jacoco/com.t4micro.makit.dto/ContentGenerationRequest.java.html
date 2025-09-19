@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ContentGenerationRequest.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.dto</a> &gt; <span class="el_source">ContentGenerationRequest.java</span></div><h1>ContentGenerationRequest.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.dto;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public class ContentGenerationRequest {
+    
+    @NotNull
+    private Long userId;
+    
+    private String topic;
+    private String product;
+    private String subject;
+    private String purpose;
+    
+    @NotBlank
+    private String targetAudience;
+    
+    private String platform;
+    private String tone;
+    
+    // Constructors
+<span class="nc" id="L23">    public ContentGenerationRequest() {}</span>
+    
+<span class="nc" id="L25">    public ContentGenerationRequest(Long userId, String targetAudience) {</span>
+<span class="nc" id="L26">        this.userId = userId;</span>
+<span class="nc" id="L27">        this.targetAudience = targetAudience;</span>
+<span class="nc" id="L28">    }</span>
+    
+    // Getters and Setters
+<span class="nc" id="L31">    public Long getUserId() { return userId; }</span>
+<span class="nc" id="L32">    public void setUserId(Long userId) { this.userId = userId; }</span>
+    
+<span class="nc" id="L34">    public String getTopic() { return topic; }</span>
+<span class="nc" id="L35">    public void setTopic(String topic) { this.topic = topic; }</span>
+    
+<span class="nc" id="L37">    public String getProduct() { return product; }</span>
+<span class="nc" id="L38">    public void setProduct(String product) { this.product = product; }</span>
+    
+<span class="nc" id="L40">    public String getSubject() { return subject; }</span>
+<span class="nc" id="L41">    public void setSubject(String subject) { this.subject = subject; }</span>
+    
+<span class="nc" id="L43">    public String getPurpose() { return purpose; }</span>
+<span class="nc" id="L44">    public void setPurpose(String purpose) { this.purpose = purpose; }</span>
+    
+<span class="nc" id="L46">    public String getTargetAudience() { return targetAudience; }</span>
+<span class="nc" id="L47">    public void setTargetAudience(String targetAudience) { this.targetAudience = targetAudience; }</span>
+    
+<span class="nc" id="L49">    public String getPlatform() { return platform; }</span>
+<span class="nc" id="L50">    public void setPlatform(String platform) { this.platform = platform; }</span>
+    
+<span class="nc" id="L52">    public String getTone() { return tone; }</span>
+<span class="nc" id="L53">    public void setTone(String tone) { this.tone = tone; }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

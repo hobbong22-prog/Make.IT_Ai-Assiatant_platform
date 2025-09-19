@@ -1,0 +1,50 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  h2:
+    console:
+      enabled: true
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+logging:
+  level:
+    com.Human.Ai.D.makit: DEBUG
+    org.springframework.security: DEBUG
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+
+# AWS 설정 (테스트용 모킹)
+aws:
+  bedrock:
+    region: us-east-1
+    endpoint: http://localhost:8080/mock-bedrock
+  s3:
+    bucket: test-bucket
+    region: us-east-1
+    endpoint: http://localhost:8080/mock-s3
+
+# 테스트 전용 설정
+test:
+  mock-ai-responses: true
+  disable-external-calls: true

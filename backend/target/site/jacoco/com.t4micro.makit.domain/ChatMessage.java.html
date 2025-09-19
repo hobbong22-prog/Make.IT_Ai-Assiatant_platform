@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ChatMessage.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.domain</a> &gt; <span class="el_source">ChatMessage.java</span></div><h1>ChatMessage.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.domain;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;chat_messages&quot;)
+public class ChatMessage {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;context_id&quot;)
+    private ConversationContext conversationContext;
+    
+    @Column(nullable = false)
+    private String sender;
+    
+    @Column(columnDefinition = &quot;TEXT&quot;, nullable = false)
+    private String content;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private MessageType type;
+    
+    @Column(nullable = false)
+    private LocalDateTime timestamp;
+    
+    @Column
+    private String messageId;
+    
+<span class="pc" id="L34">    @Column</span>
+<span class="pc" id="L35">    private Boolean isFromBot = false;</span>
+    
+    @Column
+    private String intent;
+    
+    @Column
+    private Double confidence;
+    
+    // Constructors
+<span class="fc" id="L44">    public ChatMessage() {}</span>
+    
+<span class="nc" id="L46">    public ChatMessage(ConversationContext conversationContext, String sender, String content, MessageType type) {</span>
+<span class="nc" id="L47">        this.conversationContext = conversationContext;</span>
+<span class="nc" id="L48">        this.sender = sender;</span>
+<span class="nc" id="L49">        this.content = content;</span>
+<span class="nc" id="L50">        this.type = type;</span>
+<span class="nc" id="L51">        this.timestamp = LocalDateTime.now();</span>
+<span class="nc" id="L52">        this.isFromBot = false;</span>
+<span class="nc" id="L53">    }</span>
+    
+    public ChatMessage(ConversationContext conversationContext, String sender, String content, 
+                      MessageType type, boolean isFromBot) {
+<span class="nc" id="L57">        this(conversationContext, sender, content, type);</span>
+<span class="nc" id="L58">        this.isFromBot = isFromBot;</span>
+<span class="nc" id="L59">    }</span>
+    
+    // Getters and Setters
+    public Long getId() {
+<span class="nc" id="L63">        return id;</span>
+    }
+    
+    public void setId(Long id) {
+<span class="nc" id="L67">        this.id = id;</span>
+<span class="nc" id="L68">    }</span>
+    
+    public ConversationContext getConversationContext() {
+<span class="nc" id="L71">        return conversationContext;</span>
+    }
+    
+    public void setConversationContext(ConversationContext conversationContext) {
+<span class="nc" id="L75">        this.conversationContext = conversationContext;</span>
+<span class="nc" id="L76">    }</span>
+    
+    public String getSender() {
+<span class="nc" id="L79">        return sender;</span>
+    }
+    
+    public void setSender(String sender) {
+<span class="nc" id="L83">        this.sender = sender;</span>
+<span class="nc" id="L84">    }</span>
+    
+    public String getContent() {
+<span class="nc" id="L87">        return content;</span>
+    }
+    
+    public void setContent(String content) {
+<span class="nc" id="L91">        this.content = content;</span>
+<span class="nc" id="L92">    }</span>
+    
+    public MessageType getType() {
+<span class="nc" id="L95">        return type;</span>
+    }
+    
+    public void setType(MessageType type) {
+<span class="nc" id="L99">        this.type = type;</span>
+<span class="nc" id="L100">    }</span>
+    
+    public LocalDateTime getTimestamp() {
+<span class="nc" id="L103">        return timestamp;</span>
+    }
+    
+    public void setTimestamp(LocalDateTime timestamp) {
+<span class="nc" id="L107">        this.timestamp = timestamp;</span>
+<span class="nc" id="L108">    }</span>
+    
+    public String getMessageId() {
+<span class="nc" id="L111">        return messageId;</span>
+    }
+    
+    public void setMessageId(String messageId) {
+<span class="nc" id="L115">        this.messageId = messageId;</span>
+<span class="nc" id="L116">    }</span>
+    
+    public Boolean getIsFromBot() {
+<span class="nc" id="L119">        return isFromBot;</span>
+    }
+    
+    public void setIsFromBot(Boolean isFromBot) {
+<span class="nc" id="L123">        this.isFromBot = isFromBot;</span>
+<span class="nc" id="L124">    }</span>
+    
+    public String getIntent() {
+<span class="nc" id="L127">        return intent;</span>
+    }
+    
+    public void setIntent(String intent) {
+<span class="nc" id="L131">        this.intent = intent;</span>
+<span class="nc" id="L132">    }</span>
+    
+    public Double getConfidence() {
+<span class="nc" id="L135">        return confidence;</span>
+    }
+    
+    public void setConfidence(Double confidence) {
+<span class="nc" id="L139">        this.confidence = confidence;</span>
+<span class="nc" id="L140">    }</span>
+    
+<span class="fc" id="L142">    public enum MessageType {</span>
+<span class="fc" id="L143">        CHAT, JOIN, LEAVE, ERROR, SYSTEM, ESCALATION</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

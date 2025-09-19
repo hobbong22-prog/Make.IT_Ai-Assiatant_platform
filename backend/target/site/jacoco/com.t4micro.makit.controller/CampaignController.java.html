@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CampaignController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.controller</a> &gt; <span class="el_source">CampaignController.java</span></div><h1>CampaignController.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.controller;
+
+import com.t4micro.makit.domain.Campaign;
+import com.t4micro.makit.domain.CampaignMetrics;
+import com.t4micro.makit.domain.User;
+import com.t4micro.makit.dto.CampaignCreateRequest;
+import com.t4micro.makit.repository.CampaignRepository;
+import com.t4micro.makit.repository.UserRepository;
+import com.t4micro.makit.service.CampaignService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+
+@RestController
+@RequestMapping(&quot;/api/campaigns&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+<span class="fc" id="L20">public class CampaignController {</span>
+    
+    @Autowired
+    private CampaignService campaignService;
+    
+    @Autowired
+    private CampaignRepository campaignRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @GetMapping(&quot;/user/{userId}&quot;)
+    @PreAuthorize(&quot;hasRole('ADMIN') or @authService.isCurrentUser(#userId) or @authService.canManageCampaigns(authentication.principal)&quot;)
+    public ResponseEntity&lt;List&lt;Campaign&gt;&gt; getUserCampaigns(@PathVariable Long userId) {
+<span class="nc" id="L34">        User user = userRepository.findById(userId)</span>
+<span class="nc" id="L35">                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+        
+<span class="nc" id="L37">        List&lt;Campaign&gt; campaigns = campaignRepository.findByUser(user);</span>
+<span class="nc" id="L38">        return ResponseEntity.ok(campaigns);</span>
+    }
+    
+    @GetMapping(&quot;/{id}&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MARKETING_MANAGER', 'ANALYST', 'VIEWER')&quot;)
+    public ResponseEntity&lt;Campaign&gt; getCampaign(@PathVariable Long id) {
+<span class="nc" id="L44">        Campaign campaign = campaignRepository.findById(id)</span>
+<span class="nc" id="L45">                .orElseThrow(() -&gt; new RuntimeException(&quot;Campaign not found&quot;));</span>
+<span class="nc" id="L46">        return ResponseEntity.ok(campaign);</span>
+    }
+    
+    @GetMapping(&quot;/{id}/metrics&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MARKETING_MANAGER', 'ANALYST')&quot;)
+    public ResponseEntity&lt;List&lt;CampaignMetrics&gt;&gt; getCampaignMetrics(@PathVariable Long id) {
+<span class="nc" id="L52">        Campaign campaign = campaignRepository.findByIdWithMetrics(id)</span>
+<span class="nc" id="L53">                .orElseThrow(() -&gt; new RuntimeException(&quot;Campaign not found&quot;));</span>
+<span class="nc" id="L54">        return ResponseEntity.ok(campaign.getMetrics());</span>
+    }
+    
+    @PostMapping
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MARKETING_MANAGER')&quot;)
+    public ResponseEntity&lt;Campaign&gt; createCampaign(@RequestBody CampaignCreateRequest request) {
+<span class="nc" id="L60">        User user = userRepository.findById(request.getUserId())</span>
+<span class="nc" id="L61">                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+        
+<span class="nc" id="L63">        Campaign campaign = new Campaign(</span>
+<span class="nc" id="L64">                request.getName(), </span>
+<span class="nc" id="L65">                request.getDescription(), </span>
+<span class="nc" id="L66">                request.getType(), </span>
+                user
+        );
+        
+<span class="nc" id="L70">        campaign.setTargetAudience(request.getTargetAudience());</span>
+<span class="nc" id="L71">        campaign.setBudget(request.getBudget());</span>
+<span class="nc" id="L72">        campaign.setStartDate(request.getStartDate());</span>
+<span class="nc" id="L73">        campaign.setEndDate(request.getEndDate());</span>
+        
+<span class="nc" id="L75">        campaign = campaignRepository.save(campaign);</span>
+<span class="nc" id="L76">        return ResponseEntity.ok(campaign);</span>
+    }
+    
+    @PutMapping(&quot;/{id}/status&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MARKETING_MANAGER')&quot;)
+    public ResponseEntity&lt;Campaign&gt; updateCampaignStatus(
+            @PathVariable Long id, 
+            @RequestParam Campaign.CampaignStatus status) {
+        
+<span class="nc" id="L85">        Campaign campaign = campaignRepository.findById(id)</span>
+<span class="nc" id="L86">                .orElseThrow(() -&gt; new RuntimeException(&quot;Campaign not found&quot;));</span>
+        
+<span class="nc" id="L88">        campaign.setStatus(status);</span>
+<span class="nc" id="L89">        campaign = campaignRepository.save(campaign);</span>
+        
+<span class="nc" id="L91">        return ResponseEntity.ok(campaign);</span>
+    }
+    
+    @PostMapping(&quot;/{id}/metrics&quot;)
+    @PreAuthorize(&quot;hasAnyRole('ADMIN', 'MARKETING_MANAGER')&quot;)
+    public ResponseEntity&lt;CampaignMetrics&gt; addCampaignMetrics(
+            @PathVariable Long id, 
+            @RequestBody CampaignMetrics metrics) {
+        
+<span class="nc" id="L100">        Campaign campaign = campaignRepository.findById(id)</span>
+<span class="nc" id="L101">                .orElseThrow(() -&gt; new RuntimeException(&quot;Campaign not found&quot;));</span>
+        
+<span class="nc" id="L103">        metrics.setCampaign(campaign);</span>
+<span class="nc" id="L104">        metrics.calculateMetrics();</span>
+        
+<span class="nc" id="L106">        CampaignMetrics savedMetrics = campaignService.saveCampaignMetrics(metrics);</span>
+<span class="nc" id="L107">        return ResponseEntity.ok(savedMetrics);</span>
+    }
+    
+    @DeleteMapping(&quot;/{id}&quot;)
+    @PreAuthorize(&quot;hasRole('ADMIN')&quot;)
+    public ResponseEntity&lt;Void&gt; deleteCampaign(@PathVariable Long id) {
+<span class="nc" id="L113">        campaignRepository.deleteById(id);</span>
+<span class="nc" id="L114">        return ResponseEntity.noContent().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

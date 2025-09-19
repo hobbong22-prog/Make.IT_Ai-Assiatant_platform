@@ -1,0 +1,406 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ContentTemplateController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.controller</a> &gt; <span class="el_source">ContentTemplateController.java</span></div><h1>ContentTemplateController.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.controller;
+
+import com.t4micro.makit.model.ContentTemplate;
+import com.t4micro.makit.service.ContentTemplateManager;
+import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+
+/**
+ * 콘텐츠 템플릿 관리 REST API 컨트롤러
+ * Human.Ai.D MaKIT 플랫폼의 템플릿 관리 엔드포인트를 제공합니다.
+ */
+@RestController
+@RequestMapping(&quot;/api/templates&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+<span class="fc" id="L24">public class ContentTemplateController {</span>
+    
+<span class="fc" id="L26">    private static final Logger logger = LoggerFactory.getLogger(ContentTemplateController.class);</span>
+    
+    @Autowired
+    private ContentTemplateManager templateManager;
+    
+    /**
+     * 새로운 콘텐츠 템플릿을 생성합니다.
+     * 
+     * @param template 생성할 템플릿
+     * @param userId 생성자 사용자 ID
+     * @return 생성된 템플릿
+     */
+    @PostMapping
+    public ResponseEntity&lt;?&gt; createTemplate(@Valid @RequestBody ContentTemplate template,
+                                          @RequestParam Long userId) {
+        try {
+<span class="nc" id="L42">            logger.info(&quot;템플릿 생성 요청 - 템플릿 ID: {}, 사용자 ID: {}&quot;, </span>
+<span class="nc" id="L43">                       template.getTemplateId(), userId);</span>
+            
+<span class="nc" id="L45">            ContentTemplate createdTemplate = templateManager.createTemplate(template, userId);</span>
+<span class="nc" id="L46">            return ResponseEntity.status(HttpStatus.CREATED).body(createdTemplate);</span>
+            
+<span class="nc" id="L48">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L49">            logger.warn(&quot;템플릿 생성 실패 - 잘못된 요청: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L50">            return ResponseEntity.badRequest().body(Map.of(&quot;error&quot;, e.getMessage()));</span>
+<span class="nc" id="L51">        } catch (Exception e) {</span>
+<span class="nc" id="L52">            logger.error(&quot;템플릿 생성 중 오류 발생&quot;, e);</span>
+<span class="nc" id="L53">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L54">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 생성 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 템플릿 ID로 템플릿을 조회합니다.
+     * 
+     * @param templateId 템플릿 ID
+     * @return 템플릿 정보
+     */
+    @GetMapping(&quot;/{templateId}&quot;)
+    public ResponseEntity&lt;?&gt; getTemplate(@PathVariable String templateId) {
+        try {
+<span class="nc" id="L67">            logger.debug(&quot;템플릿 조회 요청 - 템플릿 ID: {}&quot;, templateId);</span>
+            
+<span class="nc" id="L69">            Optional&lt;ContentTemplate&gt; template = templateManager.getTemplateById(templateId);</span>
+<span class="nc bnc" id="L70" title="All 2 branches missed.">            if (template.isPresent()) {</span>
+<span class="nc" id="L71">                return ResponseEntity.ok(template.get());</span>
+            } else {
+<span class="nc" id="L73">                return ResponseEntity.notFound().build();</span>
+            }
+            
+<span class="nc" id="L76">        } catch (Exception e) {</span>
+<span class="nc" id="L77">            logger.error(&quot;템플릿 조회 중 오류 발생 - 템플릿 ID: {}&quot;, templateId, e);</span>
+<span class="nc" id="L78">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L79">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 콘텐츠 타입별 템플릿 목록을 조회합니다.
+     * 
+     * @param contentType 콘텐츠 타입
+     * @return 템플릿 목록
+     */
+    @GetMapping(&quot;/by-content-type/{contentType}&quot;)
+    public ResponseEntity&lt;?&gt; getTemplatesByContentType(@PathVariable String contentType) {
+        try {
+<span class="nc" id="L92">            logger.debug(&quot;콘텐츠 타입별 템플릿 조회 - 타입: {}&quot;, contentType);</span>
+            
+<span class="nc" id="L94">            List&lt;ContentTemplate&gt; templates = templateManager.getTemplatesByContentType(contentType);</span>
+<span class="nc" id="L95">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L97">        } catch (Exception e) {</span>
+<span class="nc" id="L98">            logger.error(&quot;콘텐츠 타입별 템플릿 조회 중 오류 발생 - 타입: {}&quot;, contentType, e);</span>
+<span class="nc" id="L99">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L100">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 카테고리별 템플릿 목록을 조회합니다.
+     * 
+     * @param category 카테고리
+     * @return 템플릿 목록
+     */
+    @GetMapping(&quot;/by-category/{category}&quot;)
+    public ResponseEntity&lt;?&gt; getTemplatesByCategory(@PathVariable String category) {
+        try {
+<span class="nc" id="L113">            logger.debug(&quot;카테고리별 템플릿 조회 - 카테고리: {}&quot;, category);</span>
+            
+<span class="nc" id="L115">            List&lt;ContentTemplate&gt; templates = templateManager.getTemplatesByCategory(category);</span>
+<span class="nc" id="L116">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L118">        } catch (Exception e) {</span>
+<span class="nc" id="L119">            logger.error(&quot;카테고리별 템플릿 조회 중 오류 발생 - 카테고리: {}&quot;, category, e);</span>
+<span class="nc" id="L120">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L121">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 사용자별 템플릿 목록을 조회합니다.
+     * 
+     * @param userId 사용자 ID
+     * @return 템플릿 목록
+     */
+    @GetMapping(&quot;/by-user/{userId}&quot;)
+    public ResponseEntity&lt;?&gt; getTemplatesByUser(@PathVariable Long userId) {
+        try {
+<span class="nc" id="L134">            logger.debug(&quot;사용자별 템플릿 조회 - 사용자 ID: {}&quot;, userId);</span>
+            
+<span class="nc" id="L136">            List&lt;ContentTemplate&gt; templates = templateManager.getTemplatesByUser(userId);</span>
+<span class="nc" id="L137">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L139">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L140">            logger.warn(&quot;사용자별 템플릿 조회 실패 - 잘못된 요청: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L141">            return ResponseEntity.badRequest().body(Map.of(&quot;error&quot;, e.getMessage()));</span>
+<span class="nc" id="L142">        } catch (Exception e) {</span>
+<span class="nc" id="L143">            logger.error(&quot;사용자별 템플릿 조회 중 오류 발생 - 사용자 ID: {}&quot;, userId, e);</span>
+<span class="nc" id="L144">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L145">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 공개 템플릿 목록을 조회합니다.
+     * 
+     * @return 공개 템플릿 목록
+     */
+    @GetMapping(&quot;/public&quot;)
+    public ResponseEntity&lt;?&gt; getPublicTemplates() {
+        try {
+<span class="nc" id="L157">            logger.debug(&quot;공개 템플릿 조회 요청&quot;);</span>
+            
+<span class="nc" id="L159">            List&lt;ContentTemplate&gt; templates = templateManager.getPublicTemplates();</span>
+<span class="nc" id="L160">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L162">        } catch (Exception e) {</span>
+<span class="nc" id="L163">            logger.error(&quot;공개 템플릿 조회 중 오류 발생&quot;, e);</span>
+<span class="nc" id="L164">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L165">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 인기 템플릿 목록을 조회합니다.
+     * 
+     * @param limit 조회할 개수 (기본값: 10)
+     * @return 인기 템플릿 목록
+     */
+    @GetMapping(&quot;/popular&quot;)
+    public ResponseEntity&lt;?&gt; getPopularTemplates(@RequestParam(defaultValue = &quot;10&quot;) int limit) {
+        try {
+<span class="nc" id="L178">            logger.debug(&quot;인기 템플릿 조회 요청 - 개수: {}&quot;, limit);</span>
+            
+<span class="nc" id="L180">            List&lt;ContentTemplate&gt; templates = templateManager.getPopularTemplates(limit);</span>
+<span class="nc" id="L181">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L183">        } catch (Exception e) {</span>
+<span class="nc" id="L184">            logger.error(&quot;인기 템플릿 조회 중 오류 발생&quot;, e);</span>
+<span class="nc" id="L185">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L186">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 최근 생성된 템플릿 목록을 조회합니다.
+     * 
+     * @return 최근 템플릿 목록
+     */
+    @GetMapping(&quot;/recent&quot;)
+    public ResponseEntity&lt;?&gt; getRecentTemplates() {
+        try {
+<span class="nc" id="L198">            logger.debug(&quot;최근 템플릿 조회 요청&quot;);</span>
+            
+<span class="nc" id="L200">            List&lt;ContentTemplate&gt; templates = templateManager.getRecentTemplates();</span>
+<span class="nc" id="L201">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L203">        } catch (Exception e) {</span>
+<span class="nc" id="L204">            logger.error(&quot;최근 템플릿 조회 중 오류 발생&quot;, e);</span>
+<span class="nc" id="L205">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L206">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 키워드로 템플릿을 검색합니다.
+     * 
+     * @param keyword 검색 키워드
+     * @return 검색된 템플릿 목록
+     */
+    @GetMapping(&quot;/search&quot;)
+    public ResponseEntity&lt;?&gt; searchTemplates(@RequestParam String keyword) {
+        try {
+<span class="nc" id="L219">            logger.debug(&quot;템플릿 검색 요청 - 키워드: {}&quot;, keyword);</span>
+            
+<span class="nc" id="L221">            List&lt;ContentTemplate&gt; templates = templateManager.searchTemplates(keyword);</span>
+<span class="nc" id="L222">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L224">        } catch (Exception e) {</span>
+<span class="nc" id="L225">            logger.error(&quot;템플릿 검색 중 오류 발생 - 키워드: {}&quot;, keyword, e);</span>
+<span class="nc" id="L226">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L227">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 검색 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 태그로 템플릿을 검색합니다.
+     * 
+     * @param tags 태그 목록 (쉼표로 구분)
+     * @return 검색된 템플릿 목록
+     */
+    @GetMapping(&quot;/search-by-tags&quot;)
+    public ResponseEntity&lt;?&gt; searchTemplatesByTags(@RequestParam String tags) {
+        try {
+<span class="nc" id="L240">            logger.debug(&quot;태그별 템플릿 검색 요청 - 태그: {}&quot;, tags);</span>
+            
+<span class="nc" id="L242">            List&lt;String&gt; tagList = List.of(tags.split(&quot;,&quot;));</span>
+<span class="nc" id="L243">            List&lt;ContentTemplate&gt; templates = templateManager.searchTemplatesByTags(tagList);</span>
+<span class="nc" id="L244">            return ResponseEntity.ok(templates);</span>
+            
+<span class="nc" id="L246">        } catch (Exception e) {</span>
+<span class="nc" id="L247">            logger.error(&quot;태그별 템플릿 검색 중 오류 발생 - 태그: {}&quot;, tags, e);</span>
+<span class="nc" id="L248">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L249">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 검색 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 템플릿을 업데이트합니다.
+     * 
+     * @param templateId 템플릿 ID
+     * @param template 업데이트할 템플릿 정보
+     * @param userId 업데이트 요청 사용자 ID
+     * @return 업데이트된 템플릿
+     */
+    @PutMapping(&quot;/{templateId}&quot;)
+    public ResponseEntity&lt;?&gt; updateTemplate(@PathVariable String templateId,
+                                          @Valid @RequestBody ContentTemplate template,
+                                          @RequestParam Long userId) {
+        try {
+<span class="nc" id="L266">            logger.info(&quot;템플릿 업데이트 요청 - 템플릿 ID: {}, 사용자 ID: {}&quot;, templateId, userId);</span>
+            
+<span class="nc" id="L268">            ContentTemplate updatedTemplate = templateManager.updateTemplate(templateId, template, userId);</span>
+<span class="nc" id="L269">            return ResponseEntity.ok(updatedTemplate);</span>
+            
+<span class="nc" id="L271">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L272">            logger.warn(&quot;템플릿 업데이트 실패 - 잘못된 요청: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L273">            return ResponseEntity.badRequest().body(Map.of(&quot;error&quot;, e.getMessage()));</span>
+<span class="nc" id="L274">        } catch (Exception e) {</span>
+<span class="nc" id="L275">            logger.error(&quot;템플릿 업데이트 중 오류 발생 - 템플릿 ID: {}&quot;, templateId, e);</span>
+<span class="nc" id="L276">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L277">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 업데이트 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 템플릿을 삭제합니다.
+     * 
+     * @param templateId 템플릿 ID
+     * @param userId 삭제 요청 사용자 ID
+     * @return 삭제 결과
+     */
+    @DeleteMapping(&quot;/{templateId}&quot;)
+    public ResponseEntity&lt;?&gt; deleteTemplate(@PathVariable String templateId,
+                                          @RequestParam Long userId) {
+        try {
+<span class="nc" id="L292">            logger.info(&quot;템플릿 삭제 요청 - 템플릿 ID: {}, 사용자 ID: {}&quot;, templateId, userId);</span>
+            
+<span class="nc" id="L294">            templateManager.deleteTemplate(templateId, userId);</span>
+<span class="nc" id="L295">            return ResponseEntity.ok(Map.of(&quot;message&quot;, &quot;템플릿이 성공적으로 삭제되었습니다&quot;));</span>
+            
+<span class="nc" id="L297">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L298">            logger.warn(&quot;템플릿 삭제 실패 - 잘못된 요청: {}&quot;, e.getMessage());</span>
+<span class="nc" id="L299">            return ResponseEntity.badRequest().body(Map.of(&quot;error&quot;, e.getMessage()));</span>
+<span class="nc" id="L300">        } catch (Exception e) {</span>
+<span class="nc" id="L301">            logger.error(&quot;템플릿 삭제 중 오류 발생 - 템플릿 ID: {}&quot;, templateId, e);</span>
+<span class="nc" id="L302">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L303">                    .body(Map.of(&quot;error&quot;, &quot;템플릿 삭제 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 템플릿 사용 횟수를 증가시킵니다.
+     * 
+     * @param templateId 템플릿 ID
+     * @return 업데이트 결과
+     */
+    @PostMapping(&quot;/{templateId}/use&quot;)
+    public ResponseEntity&lt;?&gt; incrementUsageCount(@PathVariable String templateId) {
+        try {
+<span class="nc" id="L316">            logger.debug(&quot;템플릿 사용 횟수 증가 요청 - 템플릿 ID: {}&quot;, templateId);</span>
+            
+<span class="nc" id="L318">            templateManager.incrementUsageCount(templateId);</span>
+<span class="nc" id="L319">            return ResponseEntity.ok(Map.of(&quot;message&quot;, &quot;사용 횟수가 증가되었습니다&quot;));</span>
+            
+<span class="nc" id="L321">        } catch (Exception e) {</span>
+<span class="nc" id="L322">            logger.error(&quot;템플릿 사용 횟수 증가 중 오류 발생 - 템플릿 ID: {}&quot;, templateId, e);</span>
+<span class="nc" id="L323">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L324">                    .body(Map.of(&quot;error&quot;, &quot;사용 횟수 업데이트 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 템플릿 평점을 업데이트합니다.
+     * 
+     * @param templateId 템플릿 ID
+     * @param rating 새로운 평점
+     * @param totalRatings 총 평점 수
+     * @return 업데이트 결과
+     */
+    @PostMapping(&quot;/{templateId}/rate&quot;)
+    public ResponseEntity&lt;?&gt; updateRating(@PathVariable String templateId,
+                                        @RequestParam double rating,
+                                        @RequestParam int totalRatings) {
+        try {
+<span class="nc" id="L341">            logger.debug(&quot;템플릿 평점 업데이트 요청 - 템플릿 ID: {}, 평점: {}&quot;, templateId, rating);</span>
+            
+<span class="nc bnc" id="L343" title="All 4 branches missed.">            if (rating &lt; 0 || rating &gt; 5) {</span>
+<span class="nc" id="L344">                return ResponseEntity.badRequest().body(Map.of(&quot;error&quot;, &quot;평점은 0-5 사이의 값이어야 합니다&quot;));</span>
+            }
+            
+<span class="nc" id="L347">            templateManager.updateTemplateRating(templateId, rating, totalRatings);</span>
+<span class="nc" id="L348">            return ResponseEntity.ok(Map.of(&quot;message&quot;, &quot;평점이 업데이트되었습니다&quot;));</span>
+            
+<span class="nc" id="L350">        } catch (Exception e) {</span>
+<span class="nc" id="L351">            logger.error(&quot;템플릿 평점 업데이트 중 오류 발생 - 템플릿 ID: {}&quot;, templateId, e);</span>
+<span class="nc" id="L352">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L353">                    .body(Map.of(&quot;error&quot;, &quot;평점 업데이트 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 콘텐츠 타입별 템플릿 통계를 조회합니다.
+     * 
+     * @return 콘텐츠 타입별 템플릿 수
+     */
+    @GetMapping(&quot;/stats/by-content-type&quot;)
+    public ResponseEntity&lt;?&gt; getTemplateStatsByContentType() {
+        try {
+<span class="nc" id="L365">            logger.debug(&quot;콘텐츠 타입별 템플릿 통계 조회 요청&quot;);</span>
+            
+            // 주요 콘텐츠 타입들에 대한 통계 수집
+<span class="nc" id="L368">            String[] contentTypes = {&quot;BLOG_POST&quot;, &quot;EMAIL_TEMPLATE&quot;, &quot;AD_COPY&quot;, &quot;SOCIAL_MEDIA_POST&quot;};</span>
+<span class="nc" id="L369">            Map&lt;String, Long&gt; stats = new java.util.HashMap&lt;&gt;();</span>
+            
+<span class="nc bnc" id="L371" title="All 2 branches missed.">            for (String contentType : contentTypes) {</span>
+<span class="nc" id="L372">                long count = templateManager.getTemplateCountByContentType(contentType);</span>
+<span class="nc" id="L373">                stats.put(contentType, count);</span>
+            }
+            
+<span class="nc" id="L376">            return ResponseEntity.ok(stats);</span>
+            
+<span class="nc" id="L378">        } catch (Exception e) {</span>
+<span class="nc" id="L379">            logger.error(&quot;템플릿 통계 조회 중 오류 발생&quot;, e);</span>
+<span class="nc" id="L380">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L381">                    .body(Map.of(&quot;error&quot;, &quot;통계 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+    
+    /**
+     * 사용자별 템플릿 수를 조회합니다.
+     * 
+     * @param userId 사용자 ID
+     * @return 사용자의 템플릿 수
+     */
+    @GetMapping(&quot;/stats/by-user/{userId}&quot;)
+    public ResponseEntity&lt;?&gt; getTemplateCountByUser(@PathVariable Long userId) {
+        try {
+<span class="nc" id="L394">            logger.debug(&quot;사용자별 템플릿 수 조회 요청 - 사용자 ID: {}&quot;, userId);</span>
+            
+<span class="nc" id="L396">            long count = templateManager.getTemplateCountByUser(userId);</span>
+<span class="nc" id="L397">            return ResponseEntity.ok(Map.of(&quot;userId&quot;, userId, &quot;templateCount&quot;, count));</span>
+            
+<span class="nc" id="L399">        } catch (Exception e) {</span>
+<span class="nc" id="L400">            logger.error(&quot;사용자별 템플릿 수 조회 중 오류 발생 - 사용자 ID: {}&quot;, userId, e);</span>
+<span class="nc" id="L401">            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)</span>
+<span class="nc" id="L402">                    .body(Map.of(&quot;error&quot;, &quot;통계 조회 중 오류가 발생했습니다&quot;));</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

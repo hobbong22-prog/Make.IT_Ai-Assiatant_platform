@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ContentController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.controller</a> &gt; <span class="el_source">ContentController.java</span></div><h1>ContentController.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.controller;
+
+import com.t4micro.makit.domain.Content;
+import com.t4micro.makit.domain.User;
+import com.t4micro.makit.dto.ContentGenerationRequest;
+import com.t4micro.makit.repository.ContentRepository;
+import com.t4micro.makit.repository.UserRepository;
+import com.t4micro.makit.service.ContentGenerationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+
+@RestController
+@RequestMapping(&quot;/api/content&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+<span class="fc" id="L19">public class ContentController {</span>
+    
+    @Autowired
+    private ContentGenerationService contentGenerationService;
+    
+    @Autowired
+    private ContentRepository contentRepository;
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @GetMapping(&quot;/user/{userId}&quot;)
+    public ResponseEntity&lt;List&lt;Content&gt;&gt; getUserContents(@PathVariable Long userId) {
+<span class="nc" id="L32">        User user = userRepository.findById(userId)</span>
+<span class="nc" id="L33">                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+        
+<span class="nc" id="L35">        List&lt;Content&gt; contents = contentRepository.findByUser(user);</span>
+<span class="nc" id="L36">        return ResponseEntity.ok(contents);</span>
+    }
+    
+    @GetMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Content&gt; getContent(@PathVariable Long id) {
+<span class="nc" id="L41">        Content content = contentRepository.findById(id)</span>
+<span class="nc" id="L42">                .orElseThrow(() -&gt; new RuntimeException(&quot;Content not found&quot;));</span>
+<span class="nc" id="L43">        return ResponseEntity.ok(content);</span>
+    }
+    
+    @PostMapping(&quot;/generate/blog&quot;)
+    public ResponseEntity&lt;CompletableFuture&lt;Content&gt;&gt; generateBlogPost(
+            @RequestBody ContentGenerationRequest request) {
+        
+<span class="nc" id="L50">        User user = userRepository.findById(request.getUserId())</span>
+<span class="nc" id="L51">                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+        
+<span class="nc" id="L53">        CompletableFuture&lt;Content&gt; future = contentGenerationService.generateBlogPost(</span>
+<span class="nc" id="L54">                request.getTopic(), </span>
+<span class="nc" id="L55">                request.getTargetAudience(), </span>
+                user
+        );
+        
+<span class="nc" id="L59">        return ResponseEntity.ok(future);</span>
+    }
+    
+    @PostMapping(&quot;/generate/ad-copy&quot;)
+    public ResponseEntity&lt;CompletableFuture&lt;Content&gt;&gt; generateAdCopy(
+            @RequestBody ContentGenerationRequest request) {
+        
+<span class="nc" id="L66">        User user = userRepository.findById(request.getUserId())</span>
+<span class="nc" id="L67">                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+        
+<span class="nc" id="L69">        CompletableFuture&lt;Content&gt; future = contentGenerationService.generateAdCopy(</span>
+<span class="nc" id="L70">                request.getProduct(), </span>
+<span class="nc" id="L71">                request.getTargetAudience(), </span>
+<span class="nc" id="L72">                request.getPlatform(), </span>
+                user
+        );
+        
+<span class="nc" id="L76">        return ResponseEntity.ok(future);</span>
+    }
+    
+    @PostMapping(&quot;/generate/social-media&quot;)
+    public ResponseEntity&lt;CompletableFuture&lt;Content&gt;&gt; generateSocialMediaPost(
+            @RequestBody ContentGenerationRequest request) {
+        
+<span class="nc" id="L83">        User user = userRepository.findById(request.getUserId())</span>
+<span class="nc" id="L84">                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+        
+<span class="nc" id="L86">        CompletableFuture&lt;Content&gt; future = contentGenerationService.generateSocialMediaPost(</span>
+<span class="nc" id="L87">                request.getTopic(), </span>
+<span class="nc" id="L88">                request.getPlatform(), </span>
+<span class="nc" id="L89">                request.getTone(), </span>
+                user
+        );
+        
+<span class="nc" id="L93">        return ResponseEntity.ok(future);</span>
+    }
+    
+    @PostMapping(&quot;/generate/email&quot;)
+    public ResponseEntity&lt;CompletableFuture&lt;Content&gt;&gt; generateEmailTemplate(
+            @RequestBody ContentGenerationRequest request) {
+        
+<span class="nc" id="L100">        User user = userRepository.findById(request.getUserId())</span>
+<span class="nc" id="L101">                .orElseThrow(() -&gt; new RuntimeException(&quot;User not found&quot;));</span>
+        
+<span class="nc" id="L103">        CompletableFuture&lt;Content&gt; future = contentGenerationService.generateEmailTemplate(</span>
+<span class="nc" id="L104">                request.getSubject(), </span>
+<span class="nc" id="L105">                request.getPurpose(), </span>
+<span class="nc" id="L106">                request.getTargetAudience(), </span>
+                user
+        );
+        
+<span class="nc" id="L110">        return ResponseEntity.ok(future);</span>
+    }
+    
+    @PutMapping(&quot;/{id}/status&quot;)
+    public ResponseEntity&lt;Content&gt; updateContentStatus(
+            @PathVariable Long id, 
+            @RequestParam Content.ContentStatus status) {
+        
+<span class="nc" id="L118">        Content content = contentRepository.findById(id)</span>
+<span class="nc" id="L119">                .orElseThrow(() -&gt; new RuntimeException(&quot;Content not found&quot;));</span>
+        
+<span class="nc" id="L121">        content.setStatus(status);</span>
+<span class="nc" id="L122">        content = contentRepository.save(content);</span>
+        
+<span class="nc" id="L124">        return ResponseEntity.ok(content);</span>
+    }
+    
+    @DeleteMapping(&quot;/{id}&quot;)
+    public ResponseEntity&lt;Void&gt; deleteContent(@PathVariable Long id) {
+<span class="nc" id="L129">        contentRepository.deleteById(id);</span>
+<span class="nc" id="L130">        return ResponseEntity.noContent().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

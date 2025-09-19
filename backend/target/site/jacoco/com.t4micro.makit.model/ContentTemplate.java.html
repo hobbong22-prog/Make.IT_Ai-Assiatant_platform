@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ContentTemplate.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.model</a> &gt; <span class="el_source">ContentTemplate.java</span></div><h1>ContentTemplate.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.model;
+
+import com.t4micro.makit.domain.User;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+import java.time.LocalDateTime;
+import java.util.Map;
+
+/**
+ * 콘텐츠 템플릿 엔티티
+ * Human.Ai.D MaKIT 플랫폼의 재사용 가능한 콘텐츠 템플릿
+ */
+@Entity
+@Table(name = &quot;content_templates&quot;)
+public class ContentTemplate {
+    
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @NotBlank
+    @Column(unique = true)
+    private String templateId;
+    
+    @NotBlank
+    private String name;
+    
+    private String description;
+    
+    @NotBlank
+    @Column(columnDefinition = &quot;TEXT&quot;)
+    private String promptTemplate;
+    
+    @NotNull
+    private String contentType;
+    
+    @NotNull
+    private String category;
+    
+    @ElementCollection
+    @CollectionTable(name = &quot;template_parameters&quot;, 
+                    joinColumns = @JoinColumn(name = &quot;template_id&quot;))
+    @MapKeyColumn(name = &quot;parameter_name&quot;)
+    @Column(name = &quot;parameter_value&quot;)
+    private Map&lt;String, String&gt; defaultParameters;
+    
+    @ElementCollection
+    @CollectionTable(name = &quot;template_tags&quot;, 
+                    joinColumns = @JoinColumn(name = &quot;template_id&quot;))
+    @Column(name = &quot;tag&quot;)
+    private java.util.Set&lt;String&gt; tags;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;created_by&quot;)
+    private User createdBy;
+    
+<span class="fc" id="L59">    private boolean isActive = true;</span>
+    
+<span class="fc" id="L61">    private boolean isPublic = false;</span>
+    
+<span class="fc" id="L63">    private int usageCount = 0;</span>
+    
+<span class="fc" id="L65">    private double rating = 0.0;</span>
+    
+    @Column(name = &quot;created_at&quot;)
+    private LocalDateTime createdAt;
+    
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+    
+    // 기본 생성자
+<span class="fc" id="L74">    public ContentTemplate() {</span>
+<span class="fc" id="L75">        this.createdAt = LocalDateTime.now();</span>
+<span class="fc" id="L76">        this.updatedAt = LocalDateTime.now();</span>
+<span class="fc" id="L77">    }</span>
+    
+    // 생성자
+    public ContentTemplate(String templateId, String name, String promptTemplate, 
+                          String contentType, String category, User createdBy) {
+<span class="nc" id="L82">        this();</span>
+<span class="nc" id="L83">        this.templateId = templateId;</span>
+<span class="nc" id="L84">        this.name = name;</span>
+<span class="nc" id="L85">        this.promptTemplate = promptTemplate;</span>
+<span class="nc" id="L86">        this.contentType = contentType;</span>
+<span class="nc" id="L87">        this.category = category;</span>
+<span class="nc" id="L88">        this.createdBy = createdBy;</span>
+<span class="nc" id="L89">    }</span>
+    
+    // Getters and Setters
+<span class="nc" id="L92">    public Long getId() { return id; }</span>
+<span class="nc" id="L93">    public void setId(Long id) { this.id = id; }</span>
+    
+<span class="nc" id="L95">    public String getTemplateId() { return templateId; }</span>
+<span class="nc" id="L96">    public void setTemplateId(String templateId) { this.templateId = templateId; }</span>
+    
+<span class="nc" id="L98">    public String getName() { return name; }</span>
+<span class="nc" id="L99">    public void setName(String name) { this.name = name; }</span>
+    
+<span class="nc" id="L101">    public String getDescription() { return description; }</span>
+<span class="nc" id="L102">    public void setDescription(String description) { this.description = description; }</span>
+    
+<span class="nc" id="L104">    public String getPromptTemplate() { return promptTemplate; }</span>
+<span class="nc" id="L105">    public void setPromptTemplate(String promptTemplate) { this.promptTemplate = promptTemplate; }</span>
+    
+<span class="nc" id="L107">    public String getContentType() { return contentType; }</span>
+<span class="nc" id="L108">    public void setContentType(String contentType) { this.contentType = contentType; }</span>
+    
+<span class="nc" id="L110">    public String getCategory() { return category; }</span>
+<span class="nc" id="L111">    public void setCategory(String category) { this.category = category; }</span>
+    
+<span class="nc" id="L113">    public Map&lt;String, String&gt; getDefaultParameters() { return defaultParameters; }</span>
+    public void setDefaultParameters(Map&lt;String, String&gt; defaultParameters) { 
+<span class="nc" id="L115">        this.defaultParameters = defaultParameters; </span>
+<span class="nc" id="L116">    }</span>
+    
+<span class="nc" id="L118">    public java.util.Set&lt;String&gt; getTags() { return tags; }</span>
+<span class="nc" id="L119">    public void setTags(java.util.Set&lt;String&gt; tags) { this.tags = tags; }</span>
+    
+<span class="nc" id="L121">    public User getCreatedBy() { return createdBy; }</span>
+<span class="nc" id="L122">    public void setCreatedBy(User createdBy) { this.createdBy = createdBy; }</span>
+    
+<span class="nc" id="L124">    public boolean isActive() { return isActive; }</span>
+<span class="nc" id="L125">    public void setActive(boolean active) { isActive = active; }</span>
+    
+<span class="nc" id="L127">    public boolean isPublic() { return isPublic; }</span>
+<span class="nc" id="L128">    public void setPublic(boolean isPublic) { this.isPublic = isPublic; }</span>
+    
+<span class="nc" id="L130">    public int getUsageCount() { return usageCount; }</span>
+<span class="nc" id="L131">    public void setUsageCount(int usageCount) { this.usageCount = usageCount; }</span>
+    
+<span class="nc" id="L133">    public double getRating() { return rating; }</span>
+<span class="nc" id="L134">    public void setRating(double rating) { this.rating = rating; }</span>
+    
+<span class="nc" id="L136">    public LocalDateTime getCreatedAt() { return createdAt; }</span>
+<span class="nc" id="L137">    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }</span>
+    
+<span class="nc" id="L139">    public LocalDateTime getUpdatedAt() { return updatedAt; }</span>
+<span class="nc" id="L140">    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }</span>
+    
+    /**
+     * 템플릿 사용 횟수를 증가시킵니다.
+     */
+    public void incrementUsageCount() {
+<span class="nc" id="L146">        this.usageCount++;</span>
+<span class="nc" id="L147">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L148">    }</span>
+    
+    /**
+     * 템플릿 평점을 업데이트합니다.
+     * 
+     * @param newRating 새로운 평점
+     * @param totalRatings 총 평점 수
+     */
+    public void updateRating(double newRating, int totalRatings) {
+<span class="nc" id="L157">        this.rating = ((this.rating * (totalRatings - 1)) + newRating) / totalRatings;</span>
+<span class="nc" id="L158">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L159">    }</span>
+    
+    @PreUpdate
+    protected void onUpdate() {
+<span class="nc" id="L163">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L164">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

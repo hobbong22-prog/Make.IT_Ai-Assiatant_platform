@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CampaignAnalytics.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.domain</a> &gt; <span class="el_source">CampaignAnalytics.java</span></div><h1>CampaignAnalytics.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.domain;
+
+import jakarta.persistence.*;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;campaign_analytics&quot;)
+public class CampaignAnalytics {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;campaign_id&quot;, nullable = false)
+    private Campaign campaign;
+    
+    @Column(name = &quot;report_date&quot;, nullable = false)
+    private LocalDate reportDate;
+    
+    // Raw metrics
+    private Double impressions;
+    private Double clicks;
+    private Double conversions;
+    private Double cost;
+    private Double revenue;
+    
+    // Calculated metrics
+    @Column(name = &quot;click_through_rate&quot;)
+    private Double clickThroughRate;
+    
+    @Column(name = &quot;conversion_rate&quot;)
+    private Double conversionRate;
+    
+    @Column(name = &quot;return_on_ad_spend&quot;)
+    private Double returnOnAdSpend;
+    
+    @Column(name = &quot;cost_per_click&quot;)
+    private Double costPerClick;
+    
+    @Column(name = &quot;cost_per_conversion&quot;)
+    private Double costPerConversion;
+    
+    // AI-generated insights
+    @Column(name = &quot;performance_score&quot;)
+    private Double performanceScore;
+    
+    @Column(name = &quot;ai_insights&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String aiInsights;
+    
+    @Column(name = &quot;trend_analysis&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String trendAnalysis;
+    
+    @Column(name = &quot;calculated_at&quot;)
+    private LocalDateTime calculatedAt;
+    
+    @Column(name = &quot;created_at&quot;)
+    private LocalDateTime createdAt;
+    
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    // Constructors
+<span class="fc" id="L64">    public CampaignAnalytics() {</span>
+<span class="fc" id="L65">        this.createdAt = LocalDateTime.now();</span>
+<span class="fc" id="L66">        this.updatedAt = LocalDateTime.now();</span>
+<span class="fc" id="L67">    }</span>
+
+    public CampaignAnalytics(Campaign campaign, LocalDate reportDate) {
+<span class="nc" id="L70">        this();</span>
+<span class="nc" id="L71">        this.campaign = campaign;</span>
+<span class="nc" id="L72">        this.reportDate = reportDate;</span>
+<span class="nc" id="L73">    }</span>
+
+    // Getters and Setters
+<span class="nc" id="L76">    public Long getId() { return id; }</span>
+<span class="nc" id="L77">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="nc" id="L79">    public Campaign getCampaign() { return campaign; }</span>
+<span class="nc" id="L80">    public void setCampaign(Campaign campaign) { this.campaign = campaign; }</span>
+
+<span class="nc" id="L82">    public LocalDate getReportDate() { return reportDate; }</span>
+<span class="nc" id="L83">    public void setReportDate(LocalDate reportDate) { this.reportDate = reportDate; }</span>
+
+<span class="nc" id="L85">    public Double getImpressions() { return impressions; }</span>
+<span class="nc" id="L86">    public void setImpressions(Double impressions) { this.impressions = impressions; }</span>
+
+<span class="nc" id="L88">    public Double getClicks() { return clicks; }</span>
+<span class="nc" id="L89">    public void setClicks(Double clicks) { this.clicks = clicks; }</span>
+
+<span class="nc" id="L91">    public Double getConversions() { return conversions; }</span>
+<span class="nc" id="L92">    public void setConversions(Double conversions) { this.conversions = conversions; }</span>
+
+<span class="nc" id="L94">    public Double getCost() { return cost; }</span>
+<span class="nc" id="L95">    public void setCost(Double cost) { this.cost = cost; }</span>
+
+<span class="nc" id="L97">    public Double getRevenue() { return revenue; }</span>
+<span class="nc" id="L98">    public void setRevenue(Double revenue) { this.revenue = revenue; }</span>
+
+<span class="nc" id="L100">    public Double getClickThroughRate() { return clickThroughRate; }</span>
+<span class="nc" id="L101">    public void setClickThroughRate(Double clickThroughRate) { this.clickThroughRate = clickThroughRate; }</span>
+
+<span class="nc" id="L103">    public Double getConversionRate() { return conversionRate; }</span>
+<span class="nc" id="L104">    public void setConversionRate(Double conversionRate) { this.conversionRate = conversionRate; }</span>
+
+<span class="nc" id="L106">    public Double getReturnOnAdSpend() { return returnOnAdSpend; }</span>
+<span class="nc" id="L107">    public void setReturnOnAdSpend(Double returnOnAdSpend) { this.returnOnAdSpend = returnOnAdSpend; }</span>
+
+<span class="nc" id="L109">    public Double getCostPerClick() { return costPerClick; }</span>
+<span class="nc" id="L110">    public void setCostPerClick(Double costPerClick) { this.costPerClick = costPerClick; }</span>
+
+<span class="nc" id="L112">    public Double getCostPerConversion() { return costPerConversion; }</span>
+<span class="nc" id="L113">    public void setCostPerConversion(Double costPerConversion) { this.costPerConversion = costPerConversion; }</span>
+
+<span class="nc" id="L115">    public Double getPerformanceScore() { return performanceScore; }</span>
+<span class="nc" id="L116">    public void setPerformanceScore(Double performanceScore) { this.performanceScore = performanceScore; }</span>
+
+<span class="nc" id="L118">    public String getAiInsights() { return aiInsights; }</span>
+<span class="nc" id="L119">    public void setAiInsights(String aiInsights) { this.aiInsights = aiInsights; }</span>
+
+<span class="nc" id="L121">    public String getTrendAnalysis() { return trendAnalysis; }</span>
+<span class="nc" id="L122">    public void setTrendAnalysis(String trendAnalysis) { this.trendAnalysis = trendAnalysis; }</span>
+
+<span class="nc" id="L124">    public LocalDateTime getCalculatedAt() { return calculatedAt; }</span>
+<span class="nc" id="L125">    public void setCalculatedAt(LocalDateTime calculatedAt) { this.calculatedAt = calculatedAt; }</span>
+
+<span class="nc" id="L127">    public LocalDateTime getCreatedAt() { return createdAt; }</span>
+<span class="nc" id="L128">    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }</span>
+
+<span class="nc" id="L130">    public LocalDateTime getUpdatedAt() { return updatedAt; }</span>
+<span class="nc" id="L131">    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }</span>
+
+    // Business methods
+    public void calculateMetrics() {
+        // Calculate CTR
+<span class="nc bnc" id="L136" title="All 6 branches missed.">        if (impressions != null &amp;&amp; impressions &gt; 0 &amp;&amp; clicks != null) {</span>
+<span class="nc" id="L137">            this.clickThroughRate = (clicks / impressions) * 100;</span>
+        }
+        
+        // Calculate conversion rate
+<span class="nc bnc" id="L141" title="All 6 branches missed.">        if (clicks != null &amp;&amp; clicks &gt; 0 &amp;&amp; conversions != null) {</span>
+<span class="nc" id="L142">            this.conversionRate = (conversions / clicks) * 100;</span>
+        }
+        
+        // Calculate ROAS
+<span class="nc bnc" id="L146" title="All 6 branches missed.">        if (cost != null &amp;&amp; cost &gt; 0 &amp;&amp; revenue != null) {</span>
+<span class="nc" id="L147">            this.returnOnAdSpend = revenue / cost;</span>
+        }
+        
+        // Calculate CPC
+<span class="nc bnc" id="L151" title="All 6 branches missed.">        if (clicks != null &amp;&amp; clicks &gt; 0 &amp;&amp; cost != null) {</span>
+<span class="nc" id="L152">            this.costPerClick = cost / clicks;</span>
+        }
+        
+        // Calculate cost per conversion
+<span class="nc bnc" id="L156" title="All 6 branches missed.">        if (conversions != null &amp;&amp; conversions &gt; 0 &amp;&amp; cost != null) {</span>
+<span class="nc" id="L157">            this.costPerConversion = cost / conversions;</span>
+        }
+        
+<span class="nc" id="L160">        this.calculatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L161">    }</span>
+
+    @PreUpdate
+    public void preUpdate() {
+<span class="nc" id="L165">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L166">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

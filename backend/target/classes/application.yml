@@ -1,0 +1,56 @@
+spring:
+  application:
+    name: makit-platform
+  
+  datasource:
+    url: jdbc:h2:mem:makitdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms
+      jedis:
+        pool:
+          max-active: 8
+          max-idle: 8
+          min-idle: 0
+          max-wait: -1ms
+
+server:
+  port: 8083
+
+aws:
+  region: us-east-1
+  bedrock:
+    endpoint: https://bedrock-runtime.us-east-1.amazonaws.com
+  s3:
+    bucket: makit-content-storage
+  cognito:
+    enabled: false  # Set to true to enable Cognito authentication
+    user-pool-id: us-east-1_example
+    client-id: example-client-id
+
+jwt:
+  secret: mySecretKeyForJWTTokenGeneration
+
+logging:
+  level:
+    com.Human.Ai.D.makit: DEBUG
+    org.springframework.web: DEBUG

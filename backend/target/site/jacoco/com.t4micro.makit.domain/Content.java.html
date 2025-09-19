@@ -1,0 +1,110 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Content.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.domain</a> &gt; <span class="el_source">Content.java</span></div><h1>Content.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.domain;
+
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotBlank;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;contents&quot;)
+public class Content {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @NotBlank
+    private String title;
+    
+    @Column(columnDefinition = &quot;TEXT&quot;)
+    private String body;
+    
+    @Enumerated(EnumType.STRING)
+    private ContentType type;
+    
+    @Enumerated(EnumType.STRING)
+    private ContentStatus status;
+    
+    private String imageUrl;
+    private String prompt;
+    private String aiModel;
+    
+    @Column(name = &quot;created_at&quot;)
+    private LocalDateTime createdAt;
+    
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;user_id&quot;)
+    @JsonIgnore
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;campaign_id&quot;)
+    @JsonIgnore
+    private Campaign campaign;
+
+    // Enums
+<span class="fc" id="L48">    public enum ContentType {</span>
+<span class="fc" id="L49">        BLOG_POST, AD_COPY, EMAIL_TEMPLATE, SOCIAL_MEDIA_POST, IMAGE, VIDEO</span>
+    }
+
+<span class="fc" id="L52">    public enum ContentStatus {</span>
+<span class="fc" id="L53">        DRAFT, GENERATED, REVIEWED, APPROVED, PUBLISHED</span>
+    }
+
+    // Constructors
+<span class="fc" id="L57">    public Content() {}</span>
+
+<span class="fc" id="L59">    public Content(String title, ContentType type, User user) {</span>
+<span class="fc" id="L60">        this.title = title;</span>
+<span class="fc" id="L61">        this.type = type;</span>
+<span class="fc" id="L62">        this.user = user;</span>
+<span class="fc" id="L63">        this.status = ContentStatus.DRAFT;</span>
+<span class="fc" id="L64">        this.createdAt = LocalDateTime.now();</span>
+<span class="fc" id="L65">        this.updatedAt = LocalDateTime.now();</span>
+<span class="fc" id="L66">    }</span>
+
+    // Getters and Setters
+<span class="nc" id="L69">    public Long getId() { return id; }</span>
+<span class="nc" id="L70">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="nc" id="L72">    public String getTitle() { return title; }</span>
+<span class="nc" id="L73">    public void setTitle(String title) { this.title = title; }</span>
+
+<span class="nc" id="L75">    public String getBody() { return body; }</span>
+<span class="fc" id="L76">    public void setBody(String body) { this.body = body; }</span>
+
+<span class="nc" id="L78">    public ContentType getType() { return type; }</span>
+<span class="nc" id="L79">    public void setType(ContentType type) { this.type = type; }</span>
+
+<span class="nc" id="L81">    public ContentStatus getStatus() { return status; }</span>
+<span class="fc" id="L82">    public void setStatus(ContentStatus status) { this.status = status; }</span>
+
+<span class="nc" id="L84">    public String getImageUrl() { return imageUrl; }</span>
+<span class="nc" id="L85">    public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }</span>
+
+<span class="nc" id="L87">    public String getPrompt() { return prompt; }</span>
+<span class="nc" id="L88">    public void setPrompt(String prompt) { this.prompt = prompt; }</span>
+
+<span class="nc" id="L90">    public String getAiModel() { return aiModel; }</span>
+<span class="nc" id="L91">    public void setAiModel(String aiModel) { this.aiModel = aiModel; }</span>
+
+<span class="nc" id="L93">    public LocalDateTime getCreatedAt() { return createdAt; }</span>
+<span class="nc" id="L94">    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }</span>
+
+<span class="nc" id="L96">    public LocalDateTime getUpdatedAt() { return updatedAt; }</span>
+<span class="nc" id="L97">    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }</span>
+
+<span class="nc" id="L99">    public User getUser() { return user; }</span>
+<span class="nc" id="L100">    public void setUser(User user) { this.user = user; }</span>
+
+<span class="nc" id="L102">    public Campaign getCampaign() { return campaign; }</span>
+<span class="fc" id="L103">    public void setCampaign(Campaign campaign) { this.campaign = campaign; }</span>
+
+    @PreUpdate
+    public void preUpdate() {
+<span class="nc" id="L107">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L108">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

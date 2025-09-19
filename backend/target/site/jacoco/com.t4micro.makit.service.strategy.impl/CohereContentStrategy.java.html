@@ -1,0 +1,141 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CohereContentStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.service.strategy.impl</a> &gt; <span class="el_source">CohereContentStrategy.java</span></div><h1>CohereContentStrategy.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.service.strategy.impl;
+
+import com.t4micro.makit.dto.ContentGenerationRequest;
+import com.t4micro.makit.domain.Content;
+import com.t4micro.makit.domain.User;
+import com.t4micro.makit.repository.ContentRepository;
+import com.t4micro.makit.service.ai.BedrockService;
+import com.t4micro.makit.service.strategy.ContentGenerationStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * Cohere 모델을 사용한 콘텐츠 생성 전략
+ * Human.Ai.D MaKIT 플랫폼의 다국어 및 분석 중심 콘텐츠 생성 전략
+ */
+@Component
+<span class="fc" id="L23">public class CohereContentStrategy implements ContentGenerationStrategy {</span>
+    
+<span class="fc" id="L25">    private static final Logger logger = LoggerFactory.getLogger(CohereContentStrategy.class);</span>
+    
+    @Autowired
+    private BedrockService bedrockService;
+    
+    @Autowired
+    private ContentRepository contentRepository;
+    
+    @Override
+    @Async
+    public CompletableFuture&lt;Content&gt; generateContent(ContentGenerationRequest request, User user) {
+<span class="nc" id="L36">        logger.info(&quot;Cohere 모델을 사용하여 콘텐츠 생성 시작 - 사용자: {}, 타입: {}&quot;, </span>
+<span class="nc" id="L37">                   user.getUsername(), request.getContentType());</span>
+        
+        try {
+<span class="nc" id="L40">            String prompt = buildPrompt(request);</span>
+            // Cohere는 현재 Bedrock에서 텍스트 생성을 지원하지 않으므로 Claude를 사용
+<span class="nc" id="L42">            String generatedText = bedrockService.generateTextWithClaude(prompt, 1500);</span>
+            
+<span class="nc" id="L44">            Content content = new Content(generateTitle(request), request.getContentType(), user);</span>
+<span class="nc" id="L45">            content.setBody(generatedText);</span>
+<span class="nc" id="L46">            content.setAiModel(&quot;cohere.command-text-v14&quot;);</span>
+<span class="nc" id="L47">            content.setPrompt(prompt);</span>
+<span class="nc" id="L48">            content.setStatus(Content.ContentStatus.GENERATED);</span>
+            
+<span class="nc" id="L50">            Content savedContent = contentRepository.save(content);</span>
+            
+<span class="nc" id="L52">            logger.info(&quot;Cohere 모델로 콘텐츠 생성 완료 - ID: {}&quot;, savedContent.getId());</span>
+<span class="nc" id="L53">            return CompletableFuture.completedFuture(savedContent);</span>
+            
+<span class="nc" id="L55">        } catch (Exception e) {</span>
+<span class="nc" id="L56">            logger.error(&quot;Cohere 모델 콘텐츠 생성 실패 - 사용자: {}&quot;, user.getUsername(), e);</span>
+<span class="nc" id="L57">            return CompletableFuture.failedFuture(e);</span>
+        }
+    }
+    
+    @Override
+    public boolean supports(Content.ContentType contentType) {
+<span class="nc bnc" id="L63" title="All 4 branches missed.">        return contentType == Content.ContentType.BLOG_POST || </span>
+               contentType == Content.ContentType.EMAIL_TEMPLATE;
+    }
+    
+    @Override
+    public String getModelId() {
+<span class="nc" id="L69">        return &quot;cohere.command-text-v14&quot;;</span>
+    }
+    
+    @Override
+    public int getPriority() {
+<span class="nc" id="L74">        return 15; // 중간 우선순위</span>
+    }
+    
+    private String buildPrompt(ContentGenerationRequest request) {
+<span class="nc" id="L78">        StringBuilder prompt = new StringBuilder();</span>
+        
+<span class="nc" id="L80">        prompt.append(&quot;Human.Ai.D MaKIT 플랫폼을 위한 전문적인 &quot;);</span>
+        
+<span class="nc bnc" id="L82" title="All 3 branches missed.">        switch (request.getContentType()) {</span>
+            case BLOG_POST:
+<span class="nc" id="L84">                prompt.append(&quot;전문적인 블로그 포스트를 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L85">                prompt.append(&quot;요구사항:\n&quot;);</span>
+<span class="nc" id="L86">                prompt.append(&quot;- 정확하고 상세한 정보\n&quot;);</span>
+<span class="nc" id="L87">                prompt.append(&quot;- 단계별 설명과 예시\n&quot;);</span>
+<span class="nc" id="L88">                prompt.append(&quot;- 독자 친화적인 구성\n&quot;);</span>
+<span class="nc" id="L89">                break;</span>
+            case EMAIL_TEMPLATE:
+<span class="nc" id="L91">                prompt.append(&quot;전문적인 이메일 템플릿을 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L92">                prompt.append(&quot;요구사항:\n&quot;);</span>
+<span class="nc" id="L93">                prompt.append(&quot;- 명확한 제목과 본문 구조\n&quot;);</span>
+<span class="nc" id="L94">                prompt.append(&quot;- 개인화된 인사말\n&quot;);</span>
+<span class="nc" id="L95">                prompt.append(&quot;- 명확한 행동 유도\n&quot;);</span>
+<span class="nc" id="L96">                break;</span>
+            default:
+<span class="nc" id="L98">                prompt.append(&quot;전문적인 콘텐츠를 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L99">                prompt.append(&quot;요구사항:\n&quot;);</span>
+<span class="nc" id="L100">                prompt.append(&quot;- 체계적인 구성\n&quot;);</span>
+<span class="nc" id="L101">                prompt.append(&quot;- 인사이트와 트렌드 파악\n&quot;);</span>
+<span class="nc" id="L102">                prompt.append(&quot;- 실행 가능한 제안사항\n&quot;);</span>
+                break;
+        }
+        
+<span class="nc bnc" id="L106" title="All 4 branches missed.">        if (request.getKeywords() != null &amp;&amp; !request.getKeywords().isEmpty()) {</span>
+<span class="nc" id="L107">            prompt.append(&quot;\n핵심 키워드: &quot;).append(request.getKeywords());</span>
+        }
+        
+<span class="nc bnc" id="L110" title="All 4 branches missed.">        if (request.getTargetAudience() != null &amp;&amp; !request.getTargetAudience().isEmpty()) {</span>
+<span class="nc" id="L111">            prompt.append(&quot;\n대상 독자: &quot;).append(request.getTargetAudience());</span>
+        }
+        
+<span class="nc bnc" id="L114" title="All 4 branches missed.">        if (request.getProduct() != null &amp;&amp; !request.getProduct().isEmpty()) {</span>
+<span class="nc" id="L115">            prompt.append(&quot;\n관련 제품/서비스: &quot;).append(request.getProduct());</span>
+        }
+        
+<span class="nc" id="L118">        prompt.append(&quot;\n\n작성 가이드라인:\n&quot;);</span>
+<span class="nc" id="L119">        prompt.append(&quot;- 논리적이고 체계적인 구성\n&quot;);</span>
+<span class="nc" id="L120">        prompt.append(&quot;- 근거 있는 주장과 분석\n&quot;);</span>
+<span class="nc" id="L121">        prompt.append(&quot;- Human.Ai.D의 전문성 강조\n&quot;);</span>
+<span class="nc" id="L122">        prompt.append(&quot;- 독자의 이해를 돕는 명확한 설명\n&quot;);</span>
+<span class="nc" id="L123">        prompt.append(&quot;- 실무에 적용 가능한 내용\n&quot;);</span>
+        
+<span class="nc" id="L125">        return prompt.toString();</span>
+    }
+    
+    private String generateTitle(ContentGenerationRequest request) {
+<span class="nc" id="L129">        String baseTitle = &quot;Human.Ai.D MaKIT&quot;;</span>
+        
+<span class="nc bnc" id="L131" title="All 3 branches missed.">        switch (request.getContentType()) {</span>
+            case BLOG_POST:
+<span class="nc" id="L133">                return baseTitle + &quot; - 블로그 포스트&quot;;</span>
+            case EMAIL_TEMPLATE:
+<span class="nc" id="L135">                return baseTitle + &quot; - 이메일 템플릿&quot;;</span>
+            default:
+<span class="nc" id="L137">                return baseTitle + &quot; - &quot; + request.getContentType().name();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

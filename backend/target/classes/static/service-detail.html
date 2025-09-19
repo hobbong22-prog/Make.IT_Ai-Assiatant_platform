@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MaKIT - 자연어 분석 | Human.Ai.D</title>
+    <link rel="stylesheet" href="service-detail-styles.css">
+</head>
+<body>
+    <!-- 사용자 정보 -->
+    <div id="userInfo" class="user-info" style="display: none;">
+        <span id="userName"></span>
+        <button onclick="logout()" class="logout-btn">로그아웃</button>
+    </div>
+
+    <div class="app-container">
+        <!-- 사이드바 -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-text">MaKIT</div>
+                </div>
+                <button class="sidebar-toggle">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="m6 9 6 6 6-6"></path>
+                    </svg>
+                </button>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Home</div>
+                    <a href="index.html" class="nav-item">
+                        <span>Overview</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M15 21v-8a1 1 0 0 0-1-1h-4a1 1 0 0 0-1 1v8"></path>
+                            <path d="M3 10a2 2 0 0 1 .709-1.528l7-5.999a2 2 0 0 1 2.582 0l7 5.999A2 2 0 0 1 21 10v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+                        </svg>
+                    </a>
+                    <a href="all-services.html" class="nav-item">
+                        <span>All Services</span>
+                        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M20 20a2 2 0 0 0 2-2V8a2 2 0 0 0-2-2h-7.9a2 2 0 0 1-1.69-.9L9.6 3.9A2 2 0 0 0 7.93 3H4a2 2 0 0 0-2 2v13a2 2 0 0 0 2 2Z"></path>
+                        </svg>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Services by Category</div>
+                    
+                    <div class="nav-dropdown expanded">
+                        <div class="nav-dropdown-header">
+                            <span>AX Data Intelligence</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" class="expanded">
+                                <path d="m6 9 6 6 6-6"></path>
+                            </svg>
+                        </div>
+                        <div class="nav-dropdown-content">
+                            <a href="service-detail.html" class="nav-sub-item active">자연어 분석</a>
+                            <a href="#" class="nav-sub-item">유튜브 댓글 분석</a>
+                            <a href="#" class="nav-sub-item">유튜브 영향력 분석</a>
+                            <a href="#" class="nav-sub-item">웹사이트 URL 분석</a>
+                            <a href="#" class="nav-sub-item">유튜브 키워드 채널 검색</a>
+                        </div>
+                    </div>
+
+                    <div class="nav-dropdown">
+                        <div class="nav-dropdown-header">
+                            <span>AX Marketing Intelligence</span>
+                            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="m9 18 6-6-6-6"></path>
+                            </svg>
+                        </div>
+                    </div>
+
+
+                </div>
+
+                <a href="intro.html" class="nav-item go-to-web">
+                    <span>Go to Web</span>
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M15 3h6v6"></path>
+                        <path d="M10 14 21 3"></path>
+                        <path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path>
+                    </svg>
+                </a>
+            </nav>
+        </aside>
+
+        <!-- 메인 콘텐츠 -->
+        <main class="main-content">
+            <div class="content-wrapper">
+                <!-- 브레드크럼 -->
+                <div class="breadcrumb">
+                    <a href="all-services.html" class="breadcrumb-back">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="m12 19-7-7 7-7"></path>
+                            <path d="M19 12H5"></path>
+                        </svg>
+                        Back to All Services
+                    </a>
+                    <a href="all-services.html?category=data-intelligence" class="breadcrumb-category">AX Data Intelligence</a>
+                </div>
+
+                <!-- 서비스 헤더 -->
+                <div class="service-header">
+                    <h1 class="service-title">자연어 분석</h1>
+                    <h2 class="service-subtitle">비데이터 직군도 쉽게 분석하도록</h2>
+                    <p class="service-description">
+                        비정형 텍스트 데이터에서 의미있는 인사이트를 추출합니다. 
+                        감정 분석, 주제 분류, 핵심 키워드 추출을 통해 고객의 진짜 목소리를 정확하게 이해할 수 있습니다.
+                    </p>
+                </div>
+
+                <!-- 데모 인터페이스 -->
+                <div class="demo-interface">
+                    <!-- 데모 헤더 -->
+                    <div class="demo-header">
+                        <div class="assistant-avatar">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <path d="M12 8V4H8"></path>
+                                <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                                <path d="M2 14h2"></path>
+                                <path d="M20 14h2"></path>
+                                <path d="M15 13v2"></path>
+                                <path d="M9 13v2"></path>
+                            </svg>
+                        </div>
+                        <div class="assistant-info">
+                            <h3>자연어 분석 어시스턴트</h3>
+                            <p>데이터를 자연어로 쉽게 분석하세요</p>
+                        </div>
+                    </div>
+
+                    <!-- 채팅 영역 -->
+                    <div class="chat-area">
+                        <div class="chat-welcome">
+                            <div class="welcome-icon">
+                                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M12 8V4H8"></path>
+                                    <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                                    <path d="M2 14h2"></path>
+                                    <path d="M20 14h2"></path>
+                                    <path d="M15 13v2"></path>
+                                    <path d="M9 13v2"></path>
+                                </svg>
+                            </div>
+                            <h3>자연어로 데이터를 분석해보세요</h3>
+                            <p>아래 예시 질문을 선택하여 데이터 인사이트를 확인할 수 있습니다. 복잡한 SQL 쿼리 없이도 자연어로 데이터를 분석해보세요.</p>
+                            <div class="demo-notice">
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                데모에서는 샘플 질문만 선택할 수 있습니다
+                            </div>
+                        </div>
+
+                        <!-- 채팅 메시지 영역 (동적으로 추가될 예정) -->
+                        <div id="chat-messages" class="chat-messages"></div>
+                    </div>
+
+                    <!-- 예시 질문 섹션 -->
+                    <div class="example-questions">
+                        <div class="questions-header">
+                            <h4>
+                                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                                예시 질문
+                            </h4>
+                        </div>
+                        
+                        <div class="questions-grid">
+                            <button class="question-btn" data-question="최근 1주일간 매출 추이를 알려줘">
+                                <span class="question-number">1</span>
+                                <span class="question-text">최근 1주일간 매출 추이를 알려줘</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="가장 많이 팔린 상품 카테고리 TOP 5는?">
+                                <span class="question-number">2</span>
+                                <span class="question-text">가장 많이 팔린 상품 카테고리 TOP 5는?</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="고객 연령대별 구매 패턴을 분석해줘">
+                                <span class="question-number">3</span>
+                                <span class="question-text">고객 연령대별 구매 패턴을 분석해줘</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="온라인과 오프라인 매장의 매출 비교">
+                                <span class="question-number">4</span>
+                                <span class="question-text">온라인과 오프라인 매장의 매출 비교</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="베스트셀러 제품의 월별 판매 추이는?">
+                                <span class="question-number">5</span>
+                                <span class="question-text">베스트셀러 제품의 월별 판매 추이는?</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="고객 만족도가 가장 높은 제품은?">
+                                <span class="question-number">6</span>
+                                <span class="question-text">고객 만족도가 가장 높은 제품은?</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="마케팅 채널별 ROI 분석해줘">
+                                <span class="question-number">7</span>
+                                <span class="question-text">마케팅 채널별 ROI 분석해줘</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="신규 고객과 재구매 고객의 구매 패턴 비교해줘">
+                                <span class="question-number">8</span>
+                                <span class="question-text">신규 고객과 재구매 고객의 구매 패턴 비교해줘</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="제품 카테고리별 계절성 트렌드 분석해줘">
+                                <span class="question-number">9</span>
+                                <span class="question-text">제품 카테고리별 계절성 트렌드 분석해줘</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="고객 이탈 원인과 방지 전략 제안해줘">
+                                <span class="question-number">10</span>
+                                <span class="question-text">고객 이탈 원인과 방지 전략 제안해줘</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="경쟁사 대비 우리 제품의 시장 포지셔닝 분석해줘">
+                                <span class="question-number">11</span>
+                                <span class="question-text">경쟁사 대비 우리 제품의 시장 포지셔닝 분석해줘</span>
+                            </button>
+                            
+                            <button class="question-btn" data-question="소셜 미디어 마케팅 성과 분석 및 개선점 제안해줘">
+                                <span class="question-number">12</span>
+                                <span class="question-text">소셜 미디어 마케팅 성과 분석 및 개선점 제안해줘</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 질문 버튼 클릭 이벤트
+        document.querySelectorAll('.question-btn').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const question = btn.dataset.question;
+                simulateChat(question);
+            });
+        });
+
+        // 채팅 시뮬레이션
+        function simulateChat(question) {
+            const chatMessages = document.getElementById('chat-messages');
+            const chatWelcome = document.querySelector('.chat-welcome');
+            
+            // 웰컴 메시지 숨기기
+            if (chatWelcome) {
+                chatWelcome.style.display = 'none';
+            }
+            
+            // 사용자 메시지 추가
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.innerHTML = `
+                <div class="message-content">
+                    <p>${question}</p>
+                </div>
+            `;
+            chatMessages.appendChild(userMessage);
+            
+            // 로딩 메시지 추가
+            const loadingMessage = document.createElement('div');
+            loadingMessage.className = 'message bot-message loading';
+            loadingMessage.innerHTML = `
+                <div class="message-avatar">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <path d="M12 8V4H8"></path>
+                        <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                        <path d="M2 14h2"></path>
+                        <path d="M20 14h2"></path>
+                        <path d="M15 13v2"></path>
+                        <path d="M9 13v2"></path>
+                    </svg>
+                </div>
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                </div>
+            `;
+            chatMessages.appendChild(loadingMessage);
+            
+            // 스크롤 하단으로
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            
+            // 2초 후 응답 메시지
+            setTimeout(() => {
+                loadingMessage.remove();
+                
+                const botMessage = document.createElement('div');
+                botMessage.className = 'message bot-message';
+                botMessage.innerHTML = `
+                    <div class="message-avatar">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 8V4H8"></path>
+                            <rect width="16" height="12" x="4" y="8" rx="2"></rect>
+                            <path d="M2 14h2"></path>
+                            <path d="M20 14h2"></path>
+                            <path d="M15 13v2"></path>
+                            <path d="M9 13v2"></path>
+                        </svg>
+                    </div>
+                    <div class="message-content">
+                        <p>분석을 완료했습니다. 요청하신 "${question}"에 대한 결과를 보여드리겠습니다.</p>
+                        <div class="analysis-result">
+                            <div class="chart-placeholder">
+                                📊 차트 및 분석 결과가 여기에 표시됩니다
+                            </div>
+                            <p class="result-summary">실제 서비스에서는 상세한 데이터 분석 결과와 시각화된 차트가 제공됩니다.</p>
+                        </div>
+                    </div>
+                `;
+                chatMessages.appendChild(botMessage);
+                chatMessages.scrollTop = chatMessages.scrollHeight;
+            }, 2000);
+        }
+
+        // 드롭다운 토글
+        document.querySelectorAll('.nav-dropdown-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const dropdown = header.parentElement;
+                dropdown.classList.toggle('expanded');
+            });
+        });
+
+        // 사용자 정보 로드 및 백엔드 연동
+        const API_BASE_URL = 'http://localhost:8083/api';
+        let currentUser = null;
+
+        window.addEventListener('load', async () => {
+            const token = localStorage.getItem('makit_token');
+            if (token) {
+                try {
+                    const response = await fetch(`${API_BASE_URL}/auth/me`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+
+                    if (response.ok) {
+                        currentUser = await response.json();
+                        document.getElementById('userName').textContent = `${currentUser.username}님`;
+                        document.getElementById('userInfo').style.display = 'block';
+                    }
+                } catch (error) {
+                    console.error('Error loading user info:', error);
+                }
+            }
+        });
+
+        function logout() {
+            localStorage.removeItem('makit_token');
+            localStorage.removeItem('makit_user');
+            window.location.href = '/login.html';
+        }
+
+        // 실제 AI 콘텐츠 생성 기능 연동
+        async function analyzeText() {
+            const input = document.getElementById('textInput').value;
+            if (!input.trim()) {
+                alert('분석할 텍스트를 입력해주세요.');
+                return;
+            }
+
+            if (!currentUser) {
+                alert('로그인이 필요합니다.');
+                window.location.href = '/login.html';
+                return;
+            }
+
+            const chatMessages = document.getElementById('chatMessages');
+            
+            // 사용자 메시지 추가
+            const userMessage = document.createElement('div');
+            userMessage.className = 'message user-message';
+            userMessage.innerHTML = `
+                <div class="message-content">
+                    <strong>분석 요청:</strong><br>
+                    ${input}
+                </div>
+                <div class="message-time">${new Date().toLocaleTimeString()}</div>
+            `;
+            chatMessages.appendChild(userMessage);
+
+            // AI 응답 로딩 메시지
+            const loadingMessage = document.createElement('div');
+            loadingMessage.className = 'message ai-message';
+            loadingMessage.innerHTML = `
+                <div class="message-content">
+                    <div class="typing-indicator">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </div>
+                    AI가 텍스트를 분석하고 있습니다...
+                </div>
+            `;
+            chatMessages.appendChild(loadingMessage);
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+
+            try {
+                // 실제 AI 콘텐츠 생성 API 호출
+                const response = await fetch(`${API_BASE_URL}/content/generate/blog`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('makit_token')}`
+                    },
+                    body: JSON.stringify({
+                        userId: currentUser.id,
+                        topic: `텍스트 분석: ${input}`,
+                        targetAudience: '데이터 분석가'
+                    })
+                });
+
+                // 로딩 메시지 제거
+                chatMessages.removeChild(loadingMessage);
+
+                if (response.ok) {
+                    const aiResponse = document.createElement('div');
+                    aiResponse.className = 'message ai-message';
+                    aiResponse.innerHTML = `
+                        <div class="message-content">
+                            <strong>✅ 분석 완료!</strong><br>
+                            AI 기반 텍스트 분석이 시작되었습니다. 생성된 콘텐츠는 대시보드에서 확인할 수 있습니다.
+                            <br><br>
+                            <a href="/dashboard.html" style="color: #007bff;">대시보드에서 결과 보기 →</a>
+                        </div>
+                        <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                    `;
+                    chatMessages.appendChild(aiResponse);
+                } else {
+                    const errorResponse = document.createElement('div');
+                    errorResponse.className = 'message ai-message';
+                    errorResponse.innerHTML = `
+                        <div class="message-content">
+                            <strong>❌ 오류 발생</strong><br>
+                            텍스트 분석 중 오류가 발생했습니다. 다시 시도해주세요.
+                        </div>
+                        <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                    `;
+                    chatMessages.appendChild(errorResponse);
+                }
+            } catch (error) {
+                chatMessages.removeChild(loadingMessage);
+                const errorResponse = document.createElement('div');
+                errorResponse.className = 'message ai-message';
+                errorResponse.innerHTML = `
+                    <div class="message-content">
+                        <strong>❌ 연결 오류</strong><br>
+                        서버에 연결할 수 없습니다. 네트워크를 확인해주세요.
+                    </div>
+                    <div class="message-time">${new Date().toLocaleTimeString()}</div>
+                `;
+                chatMessages.appendChild(errorResponse);
+            }
+
+            chatMessages.scrollTop = chatMessages.scrollHeight;
+            document.getElementById('textInput').value = '';
+        }
+    </script>
+</body>
+</html>

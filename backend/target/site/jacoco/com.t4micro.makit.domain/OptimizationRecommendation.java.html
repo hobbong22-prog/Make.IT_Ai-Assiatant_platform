@@ -1,0 +1,214 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>OptimizationRecommendation.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.domain</a> &gt; <span class="el_source">OptimizationRecommendation.java</span></div><h1>OptimizationRecommendation.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.domain;
+
+import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+@Entity
+@Table(name = &quot;optimization_recommendations&quot;)
+public class OptimizationRecommendation {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+    
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = &quot;campaign_id&quot;, nullable = false)
+    private Campaign campaign;
+    
+    @Column(name = &quot;recommendation_type&quot;, nullable = false)
+    private String recommendationType;
+    
+    @Column(name = &quot;title&quot;, nullable = false)
+    private String title;
+    
+    @Column(name = &quot;description&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String description;
+    
+    @Column(name = &quot;action_required&quot;, columnDefinition = &quot;TEXT&quot;)
+    private String actionRequired;
+    
+    @Column(name = &quot;expected_impact&quot;)
+    private Double expectedImpact;
+    
+    @Column(name = &quot;confidence_score&quot;)
+    private Double confidenceScore;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;priority&quot;)
+    private RecommendationPriority priority;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;status&quot;)
+    private RecommendationStatus status;
+    
+    @Enumerated(EnumType.STRING)
+    @Column(name = &quot;category&quot;)
+    private RecommendationCategory category;
+    
+    @Column(name = &quot;metric_target&quot;)
+    private String metricTarget;
+    
+    @Column(name = &quot;baseline_value&quot;)
+    private Double baselineValue;
+    
+    @Column(name = &quot;target_value&quot;)
+    private Double targetValue;
+    
+    @Column(name = &quot;implementation_effort&quot;)
+    private String implementationEffort;
+    
+    @Column(name = &quot;generated_at&quot;)
+    private LocalDateTime generatedAt;
+    
+    @Column(name = &quot;expires_at&quot;)
+    private LocalDateTime expiresAt;
+    
+    @Column(name = &quot;implemented_at&quot;)
+    private LocalDateTime implementedAt;
+    
+    @Column(name = &quot;created_at&quot;)
+    private LocalDateTime createdAt;
+    
+    @Column(name = &quot;updated_at&quot;)
+    private LocalDateTime updatedAt;
+
+    // Enums
+<span class="fc" id="L75">    public enum RecommendationPriority {</span>
+<span class="fc" id="L76">        LOW, MEDIUM, HIGH, CRITICAL</span>
+    }
+
+<span class="fc" id="L79">    public enum RecommendationStatus {</span>
+<span class="fc" id="L80">        PENDING, REVIEWED, IMPLEMENTED, DISMISSED, EXPIRED</span>
+    }
+
+<span class="fc" id="L83">    public enum RecommendationCategory {</span>
+<span class="fc" id="L84">        BUDGET_OPTIMIZATION, AUDIENCE_TARGETING, CONTENT_IMPROVEMENT, </span>
+<span class="fc" id="L85">        BIDDING_STRATEGY, CREATIVE_OPTIMIZATION, TIMING_OPTIMIZATION,</span>
+<span class="fc" id="L86">        KEYWORD_OPTIMIZATION, PERFORMANCE_ENHANCEMENT</span>
+    }
+
+    // Constructors
+<span class="fc" id="L90">    public OptimizationRecommendation() {</span>
+<span class="fc" id="L91">        this.createdAt = LocalDateTime.now();</span>
+<span class="fc" id="L92">        this.updatedAt = LocalDateTime.now();</span>
+<span class="fc" id="L93">        this.status = RecommendationStatus.PENDING;</span>
+<span class="fc" id="L94">    }</span>
+
+    public OptimizationRecommendation(Campaign campaign, String recommendationType, String title) {
+<span class="nc" id="L97">        this();</span>
+<span class="nc" id="L98">        this.campaign = campaign;</span>
+<span class="nc" id="L99">        this.recommendationType = recommendationType;</span>
+<span class="nc" id="L100">        this.title = title;</span>
+<span class="nc" id="L101">        this.generatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L102">    }</span>
+
+    // Getters and Setters
+<span class="nc" id="L105">    public Long getId() { return id; }</span>
+<span class="nc" id="L106">    public void setId(Long id) { this.id = id; }</span>
+
+<span class="nc" id="L108">    public Campaign getCampaign() { return campaign; }</span>
+<span class="nc" id="L109">    public void setCampaign(Campaign campaign) { this.campaign = campaign; }</span>
+
+<span class="nc" id="L111">    public String getRecommendationType() { return recommendationType; }</span>
+<span class="nc" id="L112">    public void setRecommendationType(String recommendationType) { this.recommendationType = recommendationType; }</span>
+
+<span class="nc" id="L114">    public String getTitle() { return title; }</span>
+<span class="nc" id="L115">    public void setTitle(String title) { this.title = title; }</span>
+
+<span class="nc" id="L117">    public String getDescription() { return description; }</span>
+<span class="nc" id="L118">    public void setDescription(String description) { this.description = description; }</span>
+
+<span class="nc" id="L120">    public String getActionRequired() { return actionRequired; }</span>
+<span class="nc" id="L121">    public void setActionRequired(String actionRequired) { this.actionRequired = actionRequired; }</span>
+
+<span class="nc" id="L123">    public Double getExpectedImpact() { return expectedImpact; }</span>
+<span class="nc" id="L124">    public void setExpectedImpact(Double expectedImpact) { this.expectedImpact = expectedImpact; }</span>
+
+<span class="nc" id="L126">    public Double getConfidenceScore() { return confidenceScore; }</span>
+<span class="nc" id="L127">    public void setConfidenceScore(Double confidenceScore) { this.confidenceScore = confidenceScore; }</span>
+
+<span class="nc" id="L129">    public RecommendationPriority getPriority() { return priority; }</span>
+<span class="nc" id="L130">    public void setPriority(RecommendationPriority priority) { this.priority = priority; }</span>
+
+<span class="nc" id="L132">    public RecommendationStatus getStatus() { return status; }</span>
+<span class="nc" id="L133">    public void setStatus(RecommendationStatus status) { this.status = status; }</span>
+
+<span class="nc" id="L135">    public RecommendationCategory getCategory() { return category; }</span>
+<span class="nc" id="L136">    public void setCategory(RecommendationCategory category) { this.category = category; }</span>
+
+<span class="nc" id="L138">    public String getMetricTarget() { return metricTarget; }</span>
+<span class="nc" id="L139">    public void setMetricTarget(String metricTarget) { this.metricTarget = metricTarget; }</span>
+
+<span class="nc" id="L141">    public Double getBaselineValue() { return baselineValue; }</span>
+<span class="nc" id="L142">    public void setBaselineValue(Double baselineValue) { this.baselineValue = baselineValue; }</span>
+
+<span class="nc" id="L144">    public Double getTargetValue() { return targetValue; }</span>
+<span class="nc" id="L145">    public void setTargetValue(Double targetValue) { this.targetValue = targetValue; }</span>
+
+<span class="nc" id="L147">    public String getImplementationEffort() { return implementationEffort; }</span>
+<span class="nc" id="L148">    public void setImplementationEffort(String implementationEffort) { this.implementationEffort = implementationEffort; }</span>
+
+<span class="nc" id="L150">    public LocalDateTime getGeneratedAt() { return generatedAt; }</span>
+<span class="nc" id="L151">    public void setGeneratedAt(LocalDateTime generatedAt) { this.generatedAt = generatedAt; }</span>
+
+<span class="nc" id="L153">    public LocalDateTime getExpiresAt() { return expiresAt; }</span>
+<span class="nc" id="L154">    public void setExpiresAt(LocalDateTime expiresAt) { this.expiresAt = expiresAt; }</span>
+
+<span class="nc" id="L156">    public LocalDateTime getImplementedAt() { return implementedAt; }</span>
+<span class="nc" id="L157">    public void setImplementedAt(LocalDateTime implementedAt) { this.implementedAt = implementedAt; }</span>
+
+<span class="nc" id="L159">    public LocalDateTime getCreatedAt() { return createdAt; }</span>
+<span class="nc" id="L160">    public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }</span>
+
+<span class="nc" id="L162">    public LocalDateTime getUpdatedAt() { return updatedAt; }</span>
+<span class="nc" id="L163">    public void setUpdatedAt(LocalDateTime updatedAt) { this.updatedAt = updatedAt; }</span>
+
+    // Business methods
+    public boolean isExpired() {
+<span class="nc bnc" id="L167" title="All 4 branches missed.">        return expiresAt != null &amp;&amp; LocalDateTime.now().isAfter(expiresAt);</span>
+    }
+
+    public boolean isImplemented() {
+<span class="nc bnc" id="L171" title="All 2 branches missed.">        return status == RecommendationStatus.IMPLEMENTED;</span>
+    }
+
+    public void markAsImplemented() {
+<span class="nc" id="L175">        this.status = RecommendationStatus.IMPLEMENTED;</span>
+<span class="nc" id="L176">        this.implementedAt = LocalDateTime.now();</span>
+<span class="nc" id="L177">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L178">    }</span>
+
+    public void dismiss() {
+<span class="nc" id="L181">        this.status = RecommendationStatus.DISMISSED;</span>
+<span class="nc" id="L182">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L183">    }</span>
+
+    public double calculatePriorityScore() {
+<span class="nc" id="L186">        double score = 0.0;</span>
+        
+        // Priority weight (0-40 points)
+<span class="nc bnc" id="L189" title="All 5 branches missed.">        switch (priority) {</span>
+<span class="nc" id="L190">            case CRITICAL: score += 40; break;</span>
+<span class="nc" id="L191">            case HIGH: score += 30; break;</span>
+<span class="nc" id="L192">            case MEDIUM: score += 20; break;</span>
+<span class="nc" id="L193">            case LOW: score += 10; break;</span>
+        }
+        
+        // Expected impact weight (0-30 points)
+<span class="nc bnc" id="L197" title="All 2 branches missed.">        if (expectedImpact != null) {</span>
+<span class="nc" id="L198">            score += Math.min(expectedImpact, 30);</span>
+        }
+        
+        // Confidence score weight (0-30 points)
+<span class="nc bnc" id="L202" title="All 2 branches missed.">        if (confidenceScore != null) {</span>
+<span class="nc" id="L203">            score += (confidenceScore / 100.0) * 30;</span>
+        }
+        
+<span class="nc" id="L206">        return score;</span>
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+<span class="nc" id="L211">        this.updatedAt = LocalDateTime.now();</span>
+<span class="nc" id="L212">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

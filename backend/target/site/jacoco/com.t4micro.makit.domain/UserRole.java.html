@@ -1,0 +1,102 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserRole.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.domain</a> &gt; <span class="el_source">UserRole.java</span></div><h1>UserRole.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.domain;
+
+/**
+ * Enumeration defining user roles in the MarKIT platform
+ * Each role has specific permissions and access levels
+ */
+<span class="fc" id="L7">public enum UserRole {</span>
+    /**
+     * Administrator with full system access
+     */
+<span class="fc" id="L11">    ADMIN(&quot;ADMIN&quot;, &quot;Administrator&quot;, &quot;Full system access and user management&quot;),</span>
+    
+    /**
+     * Marketing manager with campaign and content management access
+     */
+<span class="fc" id="L16">    MARKETING_MANAGER(&quot;MARKETING_MANAGER&quot;, &quot;Marketing Manager&quot;, &quot;Campaign and content management access&quot;),</span>
+    
+    /**
+     * Content creator with content creation and editing access
+     */
+<span class="fc" id="L21">    CONTENT_CREATOR(&quot;CONTENT_CREATOR&quot;, &quot;Content Creator&quot;, &quot;Content creation and editing access&quot;),</span>
+    
+    /**
+     * Analyst with read access to analytics and reports
+     */
+<span class="fc" id="L26">    ANALYST(&quot;ANALYST&quot;, &quot;Analyst&quot;, &quot;Analytics and reporting access&quot;),</span>
+    
+    /**
+     * Viewer with read-only access
+     */
+<span class="fc" id="L31">    VIEWER(&quot;VIEWER&quot;, &quot;Viewer&quot;, &quot;Read-only access to platform&quot;);</span>
+
+    private final String code;
+    private final String displayName;
+    private final String description;
+
+<span class="fc" id="L37">    UserRole(String code, String displayName, String description) {</span>
+<span class="fc" id="L38">        this.code = code;</span>
+<span class="fc" id="L39">        this.displayName = displayName;</span>
+<span class="fc" id="L40">        this.description = description;</span>
+<span class="fc" id="L41">    }</span>
+
+    public String getCode() {
+<span class="fc" id="L44">        return code;</span>
+    }
+
+    public String getDisplayName() {
+<span class="fc" id="L48">        return displayName;</span>
+    }
+
+    public String getDescription() {
+<span class="fc" id="L52">        return description;</span>
+    }
+
+    /**
+     * Get UserRole from string code
+     */
+    public static UserRole fromCode(String code) {
+<span class="fc bfc" id="L59" title="All 2 branches covered.">        for (UserRole role : values()) {</span>
+<span class="fc bfc" id="L60" title="All 2 branches covered.">            if (role.getCode().equals(code)) {</span>
+<span class="fc" id="L61">                return role;</span>
+            }
+        }
+<span class="fc" id="L64">        throw new IllegalArgumentException(&quot;Invalid role code: &quot; + code);</span>
+    }
+
+    /**
+     * Check if this role has administrative privileges
+     */
+    public boolean isAdmin() {
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        return this == ADMIN;</span>
+    }
+
+    /**
+     * Check if this role can manage content
+     */
+    public boolean canManageContent() {
+<span class="fc bfc" id="L78" title="All 6 branches covered.">        return this == ADMIN || this == MARKETING_MANAGER || this == CONTENT_CREATOR;</span>
+    }
+
+    /**
+     * Check if this role can manage campaigns
+     */
+    public boolean canManageCampaigns() {
+<span class="fc bfc" id="L85" title="All 4 branches covered.">        return this == ADMIN || this == MARKETING_MANAGER;</span>
+    }
+
+    /**
+     * Check if this role can access analytics
+     */
+    public boolean canAccessAnalytics() {
+<span class="fc bfc" id="L92" title="All 6 branches covered.">        return this == ADMIN || this == MARKETING_MANAGER || this == ANALYST;</span>
+    }
+
+    /**
+     * Check if this role can manage users
+     */
+    public boolean canManageUsers() {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        return this == ADMIN;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

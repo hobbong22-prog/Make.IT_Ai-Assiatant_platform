@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DataLoader.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.config</a> &gt; <span class="el_source">DataLoader.java</span></div><h1>DataLoader.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.config;
+
+import com.t4micro.makit.domain.Campaign;
+import com.t4micro.makit.domain.Content;
+import com.t4micro.makit.domain.User;
+import com.t4micro.makit.domain.UserRole;
+import com.t4micro.makit.repository.CampaignRepository;
+import com.t4micro.makit.repository.ContentRepository;
+import com.t4micro.makit.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.CommandLineRunner;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Component;
+
+@Component
+<span class="fc" id="L16">public class DataLoader implements CommandLineRunner {</span>
+    
+    @Autowired
+    private UserRepository userRepository;
+    
+    @Autowired
+    private CampaignRepository campaignRepository;
+    
+    @Autowired
+    private ContentRepository contentRepository;
+    
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+    
+    @Override
+    public void run(String... args) throws Exception {
+        // Create sample users with encrypted passwords
+<span class="fc" id="L33">        User user1 = new User(&quot;demo_user&quot;, &quot;demo@humanaid.com&quot;, passwordEncoder.encode(&quot;password123&quot;), &quot;Human.Ai.D&quot;, UserRole.ADMIN);</span>
+<span class="fc" id="L34">        user1 = userRepository.save(user1);</span>
+        
+<span class="fc" id="L36">        User user2 = new User(&quot;marketer&quot;, &quot;marketer@example.com&quot;, passwordEncoder.encode(&quot;password123&quot;), &quot;Example Corp&quot;, UserRole.MARKETING_MANAGER);</span>
+<span class="fc" id="L37">        user2 = userRepository.save(user2);</span>
+        
+        // Create sample campaigns
+<span class="fc" id="L40">        Campaign campaign1 = new Campaign(&quot;Spring Product Launch&quot;, </span>
+                &quot;새로운 제품 출시를 위한 마케팅 캠페인&quot;, 
+                Campaign.CampaignType.EMAIL, user1);
+<span class="fc" id="L43">        campaign1.setStatus(Campaign.CampaignStatus.ACTIVE);</span>
+<span class="fc" id="L44">        campaign1.setTargetAudience(&quot;기술에 관심있는 20-40대&quot;);</span>
+<span class="fc" id="L45">        campaign1.setBudget(50000.0);</span>
+<span class="fc" id="L46">        campaign1 = campaignRepository.save(campaign1);</span>
+        
+<span class="fc" id="L48">        Campaign campaign2 = new Campaign(&quot;Social Media Engagement&quot;, </span>
+                &quot;소셜 미디어 참여도 증대 캠페인&quot;, 
+                Campaign.CampaignType.SOCIAL_MEDIA, user1);
+<span class="fc" id="L51">        campaign2.setStatus(Campaign.CampaignStatus.DRAFT);</span>
+<span class="fc" id="L52">        campaign2.setTargetAudience(&quot;소셜 미디어 활성 사용자&quot;);</span>
+<span class="fc" id="L53">        campaign2.setBudget(30000.0);</span>
+<span class="fc" id="L54">        campaign2 = campaignRepository.save(campaign2);</span>
+        
+        // Create sample content
+<span class="fc" id="L57">        Content content1 = new Content(&quot;AI 마케팅의 미래&quot;, Content.ContentType.BLOG_POST, user1);</span>
+<span class="fc" id="L58">        content1.setBody(&quot;AI 기술이 마케팅 분야에 가져올 혁신적인 변화에 대해 알아보겠습니다...&quot;);</span>
+<span class="fc" id="L59">        content1.setStatus(Content.ContentStatus.PUBLISHED);</span>
+<span class="fc" id="L60">        content1.setCampaign(campaign1);</span>
+<span class="fc" id="L61">        contentRepository.save(content1);</span>
+        
+<span class="fc" id="L63">        Content content2 = new Content(&quot;제품 출시 이메일&quot;, Content.ContentType.EMAIL_TEMPLATE, user1);</span>
+<span class="fc" id="L64">        content2.setBody(&quot;안녕하세요! 새로운 제품 출시 소식을 전해드립니다...&quot;);</span>
+<span class="fc" id="L65">        content2.setStatus(Content.ContentStatus.APPROVED);</span>
+<span class="fc" id="L66">        content2.setCampaign(campaign1);</span>
+<span class="fc" id="L67">        contentRepository.save(content2);</span>
+        
+<span class="fc" id="L69">        Content content3 = new Content(&quot;소셜 미디어 포스트&quot;, Content.ContentType.SOCIAL_MEDIA_POST, user1);</span>
+<span class="fc" id="L70">        content3.setBody(&quot;🚀 새로운 기능이 출시되었습니다! #MaKIT #AI #Marketing&quot;);</span>
+<span class="fc" id="L71">        content3.setStatus(Content.ContentStatus.GENERATED);</span>
+<span class="fc" id="L72">        content3.setCampaign(campaign2);</span>
+<span class="fc" id="L73">        contentRepository.save(content3);</span>
+        
+<span class="fc" id="L75">        System.out.println(&quot;Sample data loaded successfully!&quot;);</span>
+<span class="fc" id="L76">        System.out.println(&quot;Demo user: demo@t4micro.com / password123&quot;);</span>
+<span class="fc" id="L77">        System.out.println(&quot;H2 Console: http://localhost:8083/h2-console&quot;);</span>
+<span class="fc" id="L78">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

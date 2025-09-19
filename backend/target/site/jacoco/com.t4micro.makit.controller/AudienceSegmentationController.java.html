@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AudienceSegmentationController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.controller</a> &gt; <span class="el_source">AudienceSegmentationController.java</span></div><h1>AudienceSegmentationController.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.controller;
+
+import com.t4micro.makit.domain.AudienceSegment;
+import com.t4micro.makit.service.AudienceSegmentationService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+
+@RestController
+@RequestMapping(&quot;/api/audience-segments&quot;)
+@CrossOrigin(origins = &quot;*&quot;)
+<span class="fc" id="L16">public class AudienceSegmentationController {</span>
+    
+    @Autowired
+    private AudienceSegmentationService segmentationService;
+    
+    /**
+     * Create AI-generated audience segment
+     */
+    @PostMapping(&quot;/users/{userId}/ai-generated&quot;)
+    public CompletableFuture&lt;ResponseEntity&lt;AudienceSegment&gt;&gt; createAIGeneratedSegment(
+            @PathVariable Long userId,
+            @RequestParam String segmentName,
+            @RequestBody Map&lt;String, String&gt; criteria) {
+        
+<span class="nc" id="L30">        return segmentationService.createAIGeneratedSegment(userId, segmentName, criteria)</span>
+<span class="nc" id="L31">                .thenApply(segment -&gt; ResponseEntity.ok(segment));</span>
+    }
+    
+    /**
+     * Create custom audience segment
+     */
+    @PostMapping(&quot;/users/{userId}/custom&quot;)
+    public ResponseEntity&lt;AudienceSegment&gt; createCustomSegment(
+            @PathVariable Long userId,
+            @RequestParam String segmentName,
+            @RequestParam String segmentType,
+            @RequestBody Map&lt;String, String&gt; criteria) {
+        
+<span class="nc" id="L44">        AudienceSegment.SegmentType type = AudienceSegment.SegmentType.valueOf(segmentType.toUpperCase());</span>
+<span class="nc" id="L45">        AudienceSegment segment = segmentationService.createCustomSegment(userId, segmentName, criteria, type);</span>
+        
+<span class="nc" id="L47">        return ResponseEntity.ok(segment);</span>
+    }
+    
+    /**
+     * Get all segments for a user
+     */
+    @GetMapping(&quot;/users/{userId}&quot;)
+    public ResponseEntity&lt;List&lt;AudienceSegment&gt;&gt; getUserSegments(@PathVariable Long userId) {
+<span class="nc" id="L55">        List&lt;AudienceSegment&gt; segments = segmentationService.getUserSegments(userId);</span>
+<span class="nc" id="L56">        return ResponseEntity.ok(segments);</span>
+    }
+    
+    /**
+     * Get active segments for a user
+     */
+    @GetMapping(&quot;/users/{userId}/active&quot;)
+    public ResponseEntity&lt;List&lt;AudienceSegment&gt;&gt; getActiveSegments(@PathVariable Long userId) {
+<span class="nc" id="L64">        List&lt;AudienceSegment&gt; segments = segmentationService.getActiveSegments(userId);</span>
+<span class="nc" id="L65">        return ResponseEntity.ok(segments);</span>
+    }
+    
+    /**
+     * Get high-performing segments
+     */
+    @GetMapping(&quot;/users/{userId}/high-performing&quot;)
+    public ResponseEntity&lt;List&lt;AudienceSegment&gt;&gt; getHighPerformingSegments(
+            @PathVariable Long userId,
+            @RequestParam(defaultValue = &quot;70.0&quot;) Double minScore) {
+        
+<span class="nc" id="L76">        List&lt;AudienceSegment&gt; segments = segmentationService.getHighPerformingSegments(userId, minScore);</span>
+<span class="nc" id="L77">        return ResponseEntity.ok(segments);</span>
+    }
+    
+    /**
+     * Analyze segment performance
+     */
+    @PostMapping(&quot;/{segmentId}/analyze&quot;)
+    public CompletableFuture&lt;ResponseEntity&lt;String&gt;&gt; analyzeSegmentPerformance(@PathVariable Long segmentId) {
+<span class="nc" id="L85">        return segmentationService.analyzeSegmentPerformance(segmentId)</span>
+<span class="nc" id="L86">                .thenApply(result -&gt; ResponseEntity.ok(&quot;Analysis initiated for segment &quot; + segmentId));</span>
+    }
+    
+    /**
+     * Generate lookalike segments
+     */
+    @PostMapping(&quot;/users/{userId}/lookalike/{sourceSegmentId}&quot;)
+    public CompletableFuture&lt;ResponseEntity&lt;List&lt;AudienceSegment&gt;&gt;&gt; generateLookalikeSegments(
+            @PathVariable Long userId,
+            @PathVariable Long sourceSegmentId) {
+        
+<span class="nc" id="L97">        return segmentationService.generateLookalikeSegments(userId, sourceSegmentId)</span>
+<span class="nc" id="L98">                .thenApply(segments -&gt; ResponseEntity.ok(segments));</span>
+    }
+    
+    /**
+     * Update segment status
+     */
+    @PutMapping(&quot;/{segmentId}/status&quot;)
+    public ResponseEntity&lt;AudienceSegment&gt; updateSegmentStatus(
+            @PathVariable Long segmentId,
+            @RequestParam String status) {
+        
+        try {
+<span class="nc" id="L110">            AudienceSegment.SegmentStatus segmentStatus = </span>
+<span class="nc" id="L111">                    AudienceSegment.SegmentStatus.valueOf(status.toUpperCase());</span>
+            
+<span class="nc" id="L113">            AudienceSegment segment = segmentationService.updateSegmentStatus(segmentId, segmentStatus);</span>
+<span class="nc" id="L114">            return ResponseEntity.ok(segment);</span>
+            
+<span class="nc" id="L116">        } catch (IllegalArgumentException e) {</span>
+<span class="nc" id="L117">            return ResponseEntity.badRequest().build();</span>
+        }
+    }
+    
+    /**
+     * Get segment statistics
+     */
+    @GetMapping(&quot;/users/{userId}/statistics&quot;)
+    public ResponseEntity&lt;Map&lt;String, Object&gt;&gt; getSegmentStatistics(@PathVariable Long userId) {
+<span class="nc" id="L126">        Map&lt;String, Object&gt; stats = segmentationService.getSegmentStatistics(userId);</span>
+<span class="nc" id="L127">        return ResponseEntity.ok(stats);</span>
+    }
+    
+    /**
+     * Delete segment
+     */
+    @DeleteMapping(&quot;/{segmentId}&quot;)
+    public ResponseEntity&lt;String&gt; deleteSegment(@PathVariable Long segmentId) {
+<span class="nc" id="L135">        segmentationService.deleteSegment(segmentId);</span>
+<span class="nc" id="L136">        return ResponseEntity.ok(&quot;Segment deleted successfully&quot;);</span>
+    }
+    
+    /**
+     * Get segment by ID
+     */
+    @GetMapping(&quot;/{segmentId}&quot;)
+    public ResponseEntity&lt;AudienceSegment&gt; getSegment(@PathVariable Long segmentId) {
+        // This would require a method in the service to get by ID
+        // For now, return a simple response
+<span class="nc" id="L146">        return ResponseEntity.notFound().build();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>ClaudeContentStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.service.strategy.impl</a> &gt; <span class="el_source">ClaudeContentStrategy.java</span></div><h1>ClaudeContentStrategy.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.service.strategy.impl;
+
+import com.t4micro.makit.dto.ContentGenerationRequest;
+import com.t4micro.makit.domain.Content;
+import com.t4micro.makit.domain.User;
+import com.t4micro.makit.repository.ContentRepository;
+import com.t4micro.makit.service.ai.BedrockService;
+import com.t4micro.makit.service.strategy.ContentGenerationStrategy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Async;
+import org.springframework.stereotype.Component;
+
+import java.time.LocalDateTime;
+import java.util.concurrent.CompletableFuture;
+
+/**
+ * Anthropic Claude 모델을 사용한 콘텐츠 생성 전략
+ * Human.Ai.D MaKIT 플랫폼의 고품질 창작 콘텐츠 생성 전략
+ */
+@Component
+<span class="fc" id="L23">public class ClaudeContentStrategy implements ContentGenerationStrategy {</span>
+    
+<span class="fc" id="L25">    private static final Logger logger = LoggerFactory.getLogger(ClaudeContentStrategy.class);</span>
+    
+    @Autowired
+    private BedrockService bedrockService;
+    
+    @Autowired
+    private ContentRepository contentRepository;
+    
+    @Override
+    @Async
+    public CompletableFuture&lt;Content&gt; generateContent(ContentGenerationRequest request, User user) {
+<span class="nc" id="L36">        logger.info(&quot;Claude 모델을 사용하여 콘텐츠 생성 시작 - 사용자: {}, 타입: {}&quot;, </span>
+<span class="nc" id="L37">                   user.getUsername(), request.getContentType());</span>
+        
+        try {
+<span class="nc" id="L40">            String prompt = buildPrompt(request);</span>
+<span class="nc" id="L41">            String generatedText = bedrockService.generateTextWithClaude(prompt, 1000);</span>
+            
+<span class="nc" id="L43">            Content content = new Content(generateTitle(request), request.getContentType(), user);</span>
+<span class="nc" id="L44">            content.setBody(generatedText);</span>
+<span class="nc" id="L45">            content.setAiModel(&quot;anthropic.claude-v2&quot;);</span>
+<span class="nc" id="L46">            content.setPrompt(prompt);</span>
+<span class="nc" id="L47">            content.setStatus(Content.ContentStatus.GENERATED);</span>
+            
+<span class="nc" id="L49">            Content savedContent = contentRepository.save(content);</span>
+            
+<span class="nc" id="L51">            logger.info(&quot;Claude 모델로 콘텐츠 생성 완료 - ID: {}&quot;, savedContent.getId());</span>
+<span class="nc" id="L52">            return CompletableFuture.completedFuture(savedContent);</span>
+            
+<span class="nc" id="L54">        } catch (Exception e) {</span>
+<span class="nc" id="L55">            logger.error(&quot;Claude 모델 콘텐츠 생성 실패 - 사용자: {}&quot;, user.getUsername(), e);</span>
+<span class="nc" id="L56">            return CompletableFuture.failedFuture(e);</span>
+        }
+    }
+    
+    @Override
+    public boolean supports(Content.ContentType contentType) {
+<span class="nc bnc" id="L62" title="All 6 branches missed.">        return contentType == Content.ContentType.SOCIAL_MEDIA_POST || </span>
+               contentType == Content.ContentType.EMAIL_TEMPLATE || 
+               contentType == Content.ContentType.AD_COPY;
+    }
+    
+    @Override
+    public String getModelId() {
+<span class="nc" id="L69">        return &quot;anthropic.claude-3-sonnet-20240229-v1:0&quot;;</span>
+    }
+    
+    @Override
+    public int getPriority() {
+<span class="nc" id="L74">        return 5; // 매우 높은 우선순위</span>
+    }
+    
+    @Override
+    public boolean supportsMultimodal() {
+<span class="nc" id="L79">        return true; // Claude는 멀티모달 지원</span>
+    }
+    
+    private String buildPrompt(ContentGenerationRequest request) {
+<span class="nc" id="L83">        StringBuilder prompt = new StringBuilder();</span>
+        
+<span class="nc" id="L85">        prompt.append(&quot;당신은 Human.Ai.D의 전문 마케팅 콘텐츠 작가입니다. &quot;);</span>
+        
+<span class="nc bnc" id="L87" title="All 4 branches missed.">        switch (request.getContentType()) {</span>
+            case SOCIAL_MEDIA_POST:
+<span class="nc" id="L89">                prompt.append(&quot;매력적인 소셜미디어 포스트를 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L90">                prompt.append(&quot;요구사항:\n&quot;);</span>
+<span class="nc" id="L91">                prompt.append(&quot;- 간결하고 임팩트 있는 메시지\n&quot;);</span>
+<span class="nc" id="L92">                prompt.append(&quot;- 적절한 해시태그 포함\n&quot;);</span>
+<span class="nc" id="L93">                prompt.append(&quot;- 참여를 유도하는 CTA\n&quot;);</span>
+<span class="nc" id="L94">                break;</span>
+            case EMAIL_TEMPLATE:
+<span class="nc" id="L96">                prompt.append(&quot;전문적인 이메일 템플릿을 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L97">                prompt.append(&quot;요구사항:\n&quot;);</span>
+<span class="nc" id="L98">                prompt.append(&quot;- 명확한 제목과 본문 구조\n&quot;);</span>
+<span class="nc" id="L99">                prompt.append(&quot;- 개인화된 인사말\n&quot;);</span>
+<span class="nc" id="L100">                prompt.append(&quot;- 명확한 행동 유도\n&quot;);</span>
+<span class="nc" id="L101">                break;</span>
+            case AD_COPY:
+<span class="nc" id="L103">                prompt.append(&quot;효과적인 광고 카피를 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L104">                prompt.append(&quot;요구사항:\n&quot;);</span>
+<span class="nc" id="L105">                prompt.append(&quot;- 주목을 끄는 헤드라인\n&quot;);</span>
+<span class="nc" id="L106">                prompt.append(&quot;- 혜택 중심의 메시지\n&quot;);</span>
+<span class="nc" id="L107">                prompt.append(&quot;- 강력한 CTA\n&quot;);</span>
+<span class="nc" id="L108">                break;</span>
+            default:
+<span class="nc" id="L110">                prompt.append(&quot;창의적인 마케팅 콘텐츠를 작성해주세요.\n\n&quot;);</span>
+<span class="nc" id="L111">                prompt.append(&quot;요구사항:\n&quot;);</span>
+<span class="nc" id="L112">                prompt.append(&quot;- 독창적이고 기억에 남는 내용\n&quot;);</span>
+<span class="nc" id="L113">                prompt.append(&quot;- 브랜드 스토리텔링 포함\n&quot;);</span>
+<span class="nc" id="L114">                prompt.append(&quot;- 감정적 연결 유도\n&quot;);</span>
+                break;
+        }
+        
+<span class="nc bnc" id="L118" title="All 4 branches missed.">        if (request.getKeywords() != null &amp;&amp; !request.getKeywords().isEmpty()) {</span>
+<span class="nc" id="L119">            prompt.append(&quot;\n키워드: &quot;).append(request.getKeywords());</span>
+        }
+        
+<span class="nc bnc" id="L122" title="All 4 branches missed.">        if (request.getTargetAudience() != null &amp;&amp; !request.getTargetAudience().isEmpty()) {</span>
+<span class="nc" id="L123">            prompt.append(&quot;\n타겟 오디언스: &quot;).append(request.getTargetAudience());</span>
+        }
+        
+<span class="nc bnc" id="L126" title="All 4 branches missed.">        if (request.getProduct() != null &amp;&amp; !request.getProduct().isEmpty()) {</span>
+<span class="nc" id="L127">            prompt.append(&quot;\n제품/서비스: &quot;).append(request.getProduct());</span>
+        }
+        
+<span class="nc" id="L130">        prompt.append(&quot;\n\nHuman.Ai.D의 브랜드 가치:\n&quot;);</span>
+<span class="nc" id="L131">        prompt.append(&quot;- 혁신적인 AI 기술\n&quot;);</span>
+<span class="nc" id="L132">        prompt.append(&quot;- 사용자 중심의 솔루션\n&quot;);</span>
+<span class="nc" id="L133">        prompt.append(&quot;- 신뢰할 수 있는 파트너\n&quot;);</span>
+<span class="nc" id="L134">        prompt.append(&quot;- 지속적인 성장과 발전\n&quot;);</span>
+        
+<span class="nc" id="L136">        return prompt.toString();</span>
+    }
+    
+    private String generateTitle(ContentGenerationRequest request) {
+<span class="nc" id="L140">        String baseTitle = &quot;Human.Ai.D MaKIT&quot;;</span>
+        
+<span class="nc bnc" id="L142" title="All 4 branches missed.">        switch (request.getContentType()) {</span>
+            case SOCIAL_MEDIA_POST:
+<span class="nc" id="L144">                return baseTitle + &quot; - 소셜미디어 포스트&quot;;</span>
+            case EMAIL_TEMPLATE:
+<span class="nc" id="L146">                return baseTitle + &quot; - 이메일 템플릿&quot;;</span>
+            case AD_COPY:
+<span class="nc" id="L148">                return baseTitle + &quot; - 광고 카피&quot;;</span>
+            default:
+<span class="nc" id="L150">                return baseTitle + &quot; - &quot; + request.getContentType().name();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

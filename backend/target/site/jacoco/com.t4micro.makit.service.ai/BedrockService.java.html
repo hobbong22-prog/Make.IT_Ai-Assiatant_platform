@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="ko"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>BedrockService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">MaKIT Platform</a> &gt; <a href="index.source.html" class="el_package">com.t4micro.makit.service.ai</a> &gt; <span class="el_source">BedrockService.java</span></div><h1>BedrockService.java</h1><pre class="source lang-java linenums">package com.t4micro.makit.service.ai;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider;
+import software.amazon.awssdk.core.SdkBytes;
+import software.amazon.awssdk.regions.Region;
+import software.amazon.awssdk.services.bedrockruntime.BedrockRuntimeClient;
+import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelRequest;
+import software.amazon.awssdk.services.bedrockruntime.model.InvokeModelResponse;
+
+import java.util.HashMap;
+import java.util.Map;
+
+@Service
+public class BedrockService {
+    
+    private final BedrockRuntimeClient bedrockClient;
+    private final ObjectMapper objectMapper;
+    
+    @Value(&quot;${aws.region:us-east-1}&quot;)
+    private String awsRegion;
+    
+<span class="fc" id="L26">    public BedrockService() {</span>
+<span class="fc" id="L27">        this.bedrockClient = BedrockRuntimeClient.builder()</span>
+<span class="fc" id="L28">                .region(Region.of(&quot;us-east-1&quot;))</span>
+<span class="fc" id="L29">                .credentialsProvider(DefaultCredentialsProvider.create())</span>
+<span class="fc" id="L30">                .build();</span>
+<span class="fc" id="L31">        this.objectMapper = new ObjectMapper();</span>
+<span class="fc" id="L32">    }</span>
+    
+    public String generateTextWithClaude(String prompt, int maxTokens) {
+        try {
+<span class="nc" id="L36">            Map&lt;String, Object&gt; requestBody = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L37">            requestBody.put(&quot;prompt&quot;, &quot;\n\nHuman: &quot; + prompt + &quot;\n\nAssistant:&quot;);</span>
+<span class="nc" id="L38">            requestBody.put(&quot;max_tokens_to_sample&quot;, maxTokens);</span>
+<span class="nc" id="L39">            requestBody.put(&quot;temperature&quot;, 0.7);</span>
+<span class="nc" id="L40">            requestBody.put(&quot;top_p&quot;, 0.9);</span>
+            
+<span class="nc" id="L42">            String jsonBody = objectMapper.writeValueAsString(requestBody);</span>
+            
+<span class="nc" id="L44">            InvokeModelRequest request = InvokeModelRequest.builder()</span>
+<span class="nc" id="L45">                    .modelId(&quot;anthropic.claude-v2&quot;)</span>
+<span class="nc" id="L46">                    .body(SdkBytes.fromUtf8String(jsonBody))</span>
+<span class="nc" id="L47">                    .contentType(&quot;application/json&quot;)</span>
+<span class="nc" id="L48">                    .accept(&quot;application/json&quot;)</span>
+<span class="nc" id="L49">                    .build();</span>
+            
+<span class="nc" id="L51">            InvokeModelResponse response = bedrockClient.invokeModel(request);</span>
+<span class="nc" id="L52">            String responseBody = response.body().asUtf8String();</span>
+            
+<span class="nc" id="L54">            JsonNode jsonResponse = objectMapper.readTree(responseBody);</span>
+<span class="nc" id="L55">            return jsonResponse.get(&quot;completion&quot;).asText().trim();</span>
+            
+<span class="nc" id="L57">        } catch (Exception e) {</span>
+<span class="nc" id="L58">            throw new RuntimeException(&quot;Failed to generate text with Claude: &quot; + e.getMessage(), e);</span>
+        }
+    }
+    
+    public String generateTextWithTitan(String prompt, int maxTokens) {
+        try {
+<span class="nc" id="L64">            Map&lt;String, Object&gt; textGenerationConfig = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L65">            textGenerationConfig.put(&quot;maxTokenCount&quot;, maxTokens);</span>
+<span class="nc" id="L66">            textGenerationConfig.put(&quot;temperature&quot;, 0.7);</span>
+<span class="nc" id="L67">            textGenerationConfig.put(&quot;topP&quot;, 0.9);</span>
+            
+<span class="nc" id="L69">            Map&lt;String, Object&gt; requestBody = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L70">            requestBody.put(&quot;inputText&quot;, prompt);</span>
+<span class="nc" id="L71">            requestBody.put(&quot;textGenerationConfig&quot;, textGenerationConfig);</span>
+            
+<span class="nc" id="L73">            String jsonBody = objectMapper.writeValueAsString(requestBody);</span>
+            
+<span class="nc" id="L75">            InvokeModelRequest request = InvokeModelRequest.builder()</span>
+<span class="nc" id="L76">                    .modelId(&quot;amazon.titan-text-express-v1&quot;)</span>
+<span class="nc" id="L77">                    .body(SdkBytes.fromUtf8String(jsonBody))</span>
+<span class="nc" id="L78">                    .contentType(&quot;application/json&quot;)</span>
+<span class="nc" id="L79">                    .accept(&quot;application/json&quot;)</span>
+<span class="nc" id="L80">                    .build();</span>
+            
+<span class="nc" id="L82">            InvokeModelResponse response = bedrockClient.invokeModel(request);</span>
+<span class="nc" id="L83">            String responseBody = response.body().asUtf8String();</span>
+            
+<span class="nc" id="L85">            JsonNode jsonResponse = objectMapper.readTree(responseBody);</span>
+<span class="nc" id="L86">            return jsonResponse.get(&quot;results&quot;).get(0).get(&quot;outputText&quot;).asText().trim();</span>
+            
+<span class="nc" id="L88">        } catch (Exception e) {</span>
+<span class="nc" id="L89">            throw new RuntimeException(&quot;Failed to generate text with Titan: &quot; + e.getMessage(), e);</span>
+        }
+    }
+    
+    public String generateImageWithStableDiffusion(String prompt, int width, int height) {
+        try {
+<span class="nc" id="L95">            Map&lt;String, Object&gt; requestBody = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L96">            requestBody.put(&quot;text_prompts&quot;, new Object[]{</span>
+<span class="nc" id="L97">                Map.of(&quot;text&quot;, prompt, &quot;weight&quot;, 1.0)</span>
+            });
+<span class="nc" id="L99">            requestBody.put(&quot;cfg_scale&quot;, 10);</span>
+<span class="nc" id="L100">            requestBody.put(&quot;seed&quot;, 0);</span>
+<span class="nc" id="L101">            requestBody.put(&quot;steps&quot;, 50);</span>
+<span class="nc" id="L102">            requestBody.put(&quot;width&quot;, width);</span>
+<span class="nc" id="L103">            requestBody.put(&quot;height&quot;, height);</span>
+            
+<span class="nc" id="L105">            String jsonBody = objectMapper.writeValueAsString(requestBody);</span>
+            
+<span class="nc" id="L107">            InvokeModelRequest request = InvokeModelRequest.builder()</span>
+<span class="nc" id="L108">                    .modelId(&quot;stability.stable-diffusion-xl-v1&quot;)</span>
+<span class="nc" id="L109">                    .body(SdkBytes.fromUtf8String(jsonBody))</span>
+<span class="nc" id="L110">                    .contentType(&quot;application/json&quot;)</span>
+<span class="nc" id="L111">                    .accept(&quot;application/json&quot;)</span>
+<span class="nc" id="L112">                    .build();</span>
+            
+<span class="nc" id="L114">            InvokeModelResponse response = bedrockClient.invokeModel(request);</span>
+<span class="nc" id="L115">            String responseBody = response.body().asUtf8String();</span>
+            
+<span class="nc" id="L117">            JsonNode jsonResponse = objectMapper.readTree(responseBody);</span>
+<span class="nc" id="L118">            return jsonResponse.get(&quot;artifacts&quot;).get(0).get(&quot;base64&quot;).asText();</span>
+            
+<span class="nc" id="L120">        } catch (Exception e) {</span>
+<span class="nc" id="L121">            throw new RuntimeException(&quot;Failed to generate image with Stable Diffusion: &quot; + e.getMessage(), e);</span>
+        }
+    }
+    
+    public String generateEmbedding(String text) {
+        try {
+<span class="nc" id="L127">            Map&lt;String, Object&gt; requestBody = new HashMap&lt;&gt;();</span>
+<span class="nc" id="L128">            requestBody.put(&quot;inputText&quot;, text);</span>
+            
+<span class="nc" id="L130">            String jsonBody = objectMapper.writeValueAsString(requestBody);</span>
+            
+<span class="nc" id="L132">            InvokeModelRequest request = InvokeModelRequest.builder()</span>
+<span class="nc" id="L133">                    .modelId(&quot;amazon.titan-embed-text-v1&quot;)</span>
+<span class="nc" id="L134">                    .body(SdkBytes.fromUtf8String(jsonBody))</span>
+<span class="nc" id="L135">                    .contentType(&quot;application/json&quot;)</span>
+<span class="nc" id="L136">                    .accept(&quot;application/json&quot;)</span>
+<span class="nc" id="L137">                    .build();</span>
+            
+<span class="nc" id="L139">            InvokeModelResponse response = bedrockClient.invokeModel(request);</span>
+<span class="nc" id="L140">            String responseBody = response.body().asUtf8String();</span>
+            
+<span class="nc" id="L142">            JsonNode jsonResponse = objectMapper.readTree(responseBody);</span>
+<span class="nc" id="L143">            JsonNode embedding = jsonResponse.get(&quot;embedding&quot;);</span>
+            
+            // Convert embedding array to string representation
+<span class="nc" id="L146">            return objectMapper.writeValueAsString(embedding);</span>
+            
+<span class="nc" id="L148">        } catch (Exception e) {</span>
+<span class="nc" id="L149">            throw new RuntimeException(&quot;Failed to generate embedding: &quot; + e.getMessage(), e);</span>
+        }
+    }
+
+    /**
+     * Generic text generation method that uses Claude by default
+     */
+    public String generateText(String prompt, String modelId) {
+<span class="nc bnc" id="L157" title="All 4 branches missed.">        if (modelId == null || modelId.contains(&quot;claude&quot;)) {</span>
+<span class="nc" id="L158">            return generateTextWithClaude(prompt, 1000);</span>
+<span class="nc bnc" id="L159" title="All 2 branches missed.">        } else if (modelId.contains(&quot;titan&quot;)) {</span>
+<span class="nc" id="L160">            return generateTextWithTitan(prompt, 1000);</span>
+        } else {
+            // Default to Claude
+<span class="nc" id="L163">            return generateTextWithClaude(prompt, 1000);</span>
+        }
+    }
+
+    /**
+     * Simple text generation method with default parameters
+     */
+    public String generateText(String prompt) {
+<span class="nc" id="L171">        return generateTextWithClaude(prompt, 1000);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>
